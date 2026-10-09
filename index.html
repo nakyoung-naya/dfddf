@@ -531,6 +531,7 @@ function openSheet(){
 /* ---------- pages ---------- */
 const ph=(t,sub,act='')=>`<div class="ph"><div><h1>${t}</h1>${sub?`<p>${sub}</p>`:''}</div><span class="sp"></span><div class="row">${act}</div></div>`;
 const storeBanner=()=>Store.mode==='local'&&!lsGet('jn_hidebanner',false)?`<div class="banner">기록은 이 휴대폰에만 저장돼요. 다른 기기로 옮기거나 잃어버리지 않도록 설정·백업에서 가끔 백업 파일을 받아 두세요. <button class="btn txt sm" data-hidebanner>알겠어요</button></div>`:Store.mode==='memory'?`<div class="banner">미리보기 화면이라 입력한 내용이 저장되지 않아요.</div>`:'';
+function feedHint(){if(!F.kw.length){return ''}const t=todayStr();const m=arr(FEED.list).filter(p=>(!okDate(p.end)||p.end>=t)&&scorePost(p,F.kw).s>0);if(!m.length)return '';const soon=m.filter(p=>{const n=dday(p.end);return n!==null&&n<=3}).length;return `<button class="card" data-go="find" style="text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px"><span style="flex:1"><b>내 키워드에 맞는 진행 중 공고 ${m.length}개</b><br><span class="small muted">${soon?`3일 안에 마감되는 공고 ${soon}개 · `:''}공고 찾기에서 보기</span></span><span class="faint">›</span></button>`}
 function evRow(e){const n=dday(e.date);return `<button class="li" data-ref="${e.ref}"><span class="date num">${mdw(e.date)}</span><span><strong><i class="kind k-${e.kind}"></i>${esc(e.title)}</strong><small>${esc(e.sub)}</small></span><span class="dd ${ddCls(n)}">${ddLabel(n)}</span></button>`}
 
 function pHome(){
