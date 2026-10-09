@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>취업 수첩</title>
+<meta name="description" content="지원 현황, 캘린더, 경험 정리, 자소서, 스펙, 면접 준비를 한곳에서 관리하는 취업 준비 앱">
+<meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161A" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="취업 수첩">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: app shell — grouped sidebar on desktop, thumb-reach bottom bar on phones; one calm accent, state carried by small dots */
+:root{
+  --bg:#F4F5F7; --surface:#FFFFFF; --surface-2:#F0F2F5; --ink:#1E2329; --ink-2:#56606C; --ink-3:#8A929D; --line:#E2E5EA;
+  --accent:#3E59CF; --accent-ink:#2D44A8; --accent-soft:#ECEFFB; --on-accent:#FFFFFF;
+  --due:#C8463B; --due-soft:#FBEDEB; --stage:#A86B12; --stage-soft:#FAF2E3; --ok:#2E8659; --ok-soft:#E6F3EC;
+  --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 16px rgba(20,30,50,.05);
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --r:12px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14161A; --surface:#1C1F25; --surface-2:#252930; --ink:#E7E9EC; --ink-2:#A8AFB9; --ink-3:#7D8590; --line:#2F333B;
+  --accent:#8FA2F5; --accent-ink:#AEBBF8; --accent-soft:#262D48; --on-accent:#14161A;
+  --due:#EE8379; --due-soft:#3A2526; --stage:#E0AE5C; --stage-soft:#3A3021; --ok:#6CC596; --ok-soft:#1F3328;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161A; --surface:#1C1F25; --surface-2:#252930; --ink:#E7E9EC; --ink-2:#A8AFB9; --ink-3:#7D8590; --line:#2F333B;
+  --accent:#8FA2F5; --accent-ink:#AEBBF8; --accent-soft:#262D48; --on-accent:#14161A;
+  --due:#EE8379; --due-soft:#3A2526; --stage:#E0AE5C; --stage-soft:#3A3021; --ok:#6CC596; --ok-soft:#1F3328;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+html{font-size:16px} html[data-fs="s"]{font-size:14.5px} html[data-fs="l"]{font-size:17.5px}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.6;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+h1,h2,h3,h4{margin:0;line-height:1.35;text-wrap:balance;font-weight:700}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);background:var(--surface);padding:22px 14px;display:flex;flex-direction:column;gap:18px}
+.logo{font-size:1.15rem;font-weight:700;padding:0 10px;display:flex;align-items:center;gap:8px}
+.logo i{width:10px;height:10px;border-radius:3px;background:var(--accent)}
+.navgrp{display:flex;flex-direction:column;gap:2px}
+.navgrp p{margin:0 0 4px;padding:0 10px;font-size:.72rem;font-weight:700;color:var(--ink-3);letter-spacing:.06em}
+.nav{display:flex;align-items:center;gap:10px;border:0;background:transparent;cursor:pointer;padding:9px 10px;border-radius:9px;color:var(--ink-2);font-size:.95rem;font-weight:500;text-align:left;width:100%;min-height:42px}
+.nav svg{width:19px;height:19px;flex:none}
+.nav:hover{background:var(--surface-2)}
+.nav[aria-current="page"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.nav .cnt{margin-left:auto;font-size:.75rem;color:var(--ink-3)}
+.side-foot{margin-top:auto;font-size:.78rem;color:var(--ink-3);padding:0 10px}
+.main{min-width:0;padding-inline:32px;padding-block:28px 64px}
+.page{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.mtop{display:none}
+.bnav{display:none}
+svg.i{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.ph{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
+.ph h1{font-size:1.6rem}
+.ph p{margin:4px 0 0;color:var(--ink-2);font-size:.92rem}
+.sp{flex:1}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.muted{color:var(--ink-2)} .faint{color:var(--ink-3)}
+.small{font-size:.85rem}
+
+.btn{border:1px solid transparent;cursor:pointer;border-radius:9px;padding:.55rem .95rem;font-weight:500;font-size:.92rem;background:var(--accent);color:var(--on-accent);display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;min-height:40px}
+.btn.sec{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn.sec:hover{background:var(--surface-2)}
+.btn.txt{background:transparent;color:var(--accent);padding-inline:.5rem}
+.btn.del{background:transparent;border-color:var(--line);color:var(--due)}
+.btn.sm{padding:.3rem .65rem;font-size:.83rem;min-height:32px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn svg{width:16px;height:16px}
+.ai-btn{background:var(--ink);color:var(--surface)}
+.in{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:.55rem .75rem;min-height:40px}
+.in:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.in{resize:vertical;line-height:1.7}
+select.in{cursor:pointer}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>label,.lbl{font-size:.8rem;font-weight:500;color:var(--ink-2)}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:9px;padding:3px}
+.seg button{border:0;background:transparent;padding:.35rem .8rem;border-radius:7px;cursor:pointer;font-size:.88rem;color:var(--ink-2);min-height:34px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.3rem .8rem;font-size:.85rem;cursor:pointer;color:var(--ink-2);min-height:34px}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.card-h h2{font-size:1.05rem}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:28px 20px;text-align:center;color:var(--ink-2);font-size:.92rem;background:var(--surface)}
+.banner{border-radius:var(--r);padding:12px 16px;font-size:.88rem;background:var(--stage-soft);color:var(--ink)}
+.note{font-size:.82rem;color:var(--ink-3);margin:0}
+.err{font-size:.85rem;color:var(--due);margin:0}
+
+.st{display:inline-flex;align-items:center;gap:6px;font-size:.83rem;font-weight:500;white-space:nowrap}
+.st i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.dd{font-size:.8rem;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.dd.hot{background:var(--due-soft);color:var(--due)}
+.dd.warm{background:var(--stage-soft);color:var(--stage)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.kpi span{font-size:.82rem;color:var(--ink-2)}
+.kpi b{display:block;font-size:1.9rem;line-height:1.2;margin-top:4px}
+.kpi small{color:var(--ink-3);font-size:.78rem}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.list{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 6px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;width:100%;cursor:pointer;border-radius:0}
+.li:first-child{border-top:0}
+.li:hover{background:var(--surface-2)}
+.li .date{font-size:.82rem;color:var(--ink-2)}
+.li strong{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li small{color:var(--ink-3);font-size:.8rem}
+.kind{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.k-start{background:var(--accent)} .k-due{background:var(--due)} .k-stage{background:var(--stage)} .k-exam{background:var(--ok)} .k-personal{background:var(--ink-3)}
+.stack{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--surface-2);gap:2px}
+.stack div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.82rem;color:var(--ink-2)}
+.todo{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid var(--line)}
+.todo:first-child{border-top:0}
+.todo input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.todo>span{flex:1;min-width:0}
+.todo.done>span{color:var(--ink-3);text-decoration:line-through}
+.xbtn{border:0;background:transparent;color:var(--ink-3);cursor:pointer;padding:4px 8px;border-radius:6px;font-size:1.1rem;line-height:1;min-height:32px}
+.xbtn:hover{background:var(--surface-2);color:var(--due)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.step:hover{border-color:var(--accent)}
+.step b{font-size:.78rem;color:var(--accent);font-weight:700}
+.step strong{font-size:1.02rem}
+.step span{font-size:.88rem;color:var(--ink-2)}
+
+.cal-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.cal-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cal-head h2{font-size:1.2rem;min-width:7.5em;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.cal .wd{font-size:.78rem;font-weight:500;color:var(--ink-3);text-align:center;padding:6px 0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface-2)}
+.cal .wd.sun,.day.sun .dn{color:var(--due)}
+.day{min-height:104px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;display:flex;flex-direction:column;align-items:stretch;gap:3px;background:var(--surface);cursor:pointer;text-align:left;min-width:0}
+.day.out{background:var(--surface-2)} .day.out .dn{color:var(--ink-3)}
+.day:hover{background:var(--surface-2)}
+.day[aria-selected="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
+.dn{font-size:.82rem;font-weight:500;width:24px;height:24px;display:grid;place-items:center;border-radius:50%}
+.day.today .dn{background:var(--accent);color:var(--on-accent)}
+.pill{font-size:.72rem;line-height:1.35;padding:2px 5px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+.pill.k-start{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.k-due{background:var(--due-soft);color:var(--due)}
+.pill.k-stage{background:var(--stage-soft);color:var(--stage)}
+.pill.k-exam{background:var(--ok-soft);color:var(--ok)}
+.pill.k-personal{background:var(--surface-2);color:var(--ink-2)}
+.more{font-size:.72rem;color:var(--ink-3)}
+.dots{display:none;gap:3px;flex-wrap:wrap}
+.dots i{width:6px;height:6px;border-radius:50%}
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--ink-2);margin-top:12px}
+
+.sumstrip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.sumstrip div{padding:14px 18px;border-left:1px solid var(--line)}
+.sumstrip div:first-child{border-left:0}
+.sumstrip span{font-size:.8rem;color:var(--ink-2)}
+.sumstrip b{display:block;font-size:1.45rem}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.toolbar .in{max-width:240px}
+.tbl{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tr{display:grid;grid-template-columns:minmax(0,2fr) 140px minmax(0,1.2fr) 80px minmax(0,1.4fr) 74px;gap:14px;align-items:center;padding:12px 18px;border-top:1px solid var(--line);cursor:pointer}
+.tr:first-child{border-top:0}
+.tr.th{cursor:default;background:var(--surface-2);font-size:.78rem;font-weight:500;color:var(--ink-2);padding-block:9px}
+.tr:not(.th):hover{background:var(--surface-2)}
+.tr .co strong{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .co small{color:var(--ink-2);font-size:.83rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .cell{font-size:.86rem;color:var(--ink-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .mlabel{display:none}
+.stsel{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:.3rem .5rem;font-size:.85rem;width:100%;cursor:pointer;min-height:36px}
+.board-scroll{overflow-x:auto;padding-bottom:6px}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:220px;gap:12px;min-width:max-content}
+.col{background:var(--surface-2);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.col-h{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 4px;font-size:.88rem;font-weight:700}
+.bcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:3px;text-align:left;width:100%}
+.bcard:hover{border-color:var(--accent)}
+.bcard strong{font-size:.92rem}
+.bcard small{color:var(--ink-2);font-size:.8rem}
+
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.kw{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:5px 6px;background:var(--surface);min-height:40px}
+.kw:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.kw input{border:0;outline:0;flex:1;min-width:120px;padding:4px;background:transparent}
+.kwchip{display:inline-flex;gap:2px;align-items:center;background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:2px 4px 2px 10px;font-size:.85rem;font-weight:500}
+.kwchip button{border:0;background:transparent;cursor:pointer;color:inherit;padding:0 5px;font-size:.95rem}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{border:1px dashed var(--line);background:transparent;border-radius:999px;padding:.2rem .7rem;font-size:.8rem;cursor:pointer;color:var(--ink-2);min-height:30px}
+.rec{border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
+.rec h3{font-size:1rem}
+.rec p{margin:0;font-size:.9rem;color:var(--ink-2)}
+.co-btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:.35rem .75rem;font-size:.86rem;cursor:pointer;min-height:36px}
+.co-btn:hover{border-color:var(--accent);color:var(--accent)}
+.co-btn[data-added]{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink);cursor:default}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.75rem;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.posting{border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--surface-2)}
+.posting ul{margin:0;padding-left:18px;font-size:.86rem;color:var(--ink-2)}
+.thinking{display:flex;align-items:center;gap:10px;color:var(--ink-2);font-size:.88rem;padding:6px 0}
+.thinking i{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite alternate}
+.thinking i:nth-child(2){animation-delay:.2s}.thinking i:nth-child(3){animation-delay:.4s}
+@keyframes pulse{from{opacity:.2}to{opacity:1}}
+.aibox{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:.9rem}
+.aibox h4{font-size:.85rem;color:var(--accent-ink)}
+.aibox ul{margin:4px 0 0;padding-left:18px}
+.aibox p{margin:4px 0 0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:8px;text-align:left;width:100%}
+.story:hover{border-color:var(--accent)}
+.story h3{font-size:1rem}
+.story .per{font-size:.8rem;color:var(--ink-3)}
+.star{display:flex;gap:4px}
+.star span{font-size:.72rem;font-weight:700;width:24px;height:22px;display:grid;place-items:center;border-radius:5px;background:var(--surface-2);color:var(--ink-3)}
+.star span.on{background:var(--accent-soft);color:var(--accent-ink)}
+.idea{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:6px}
+.idea p{margin:0;font-size:.86rem;color:var(--ink-2)}
+
+.ess{display:grid;grid-template-columns:240px minmax(0,1fr) 300px;gap:16px;align-items:start}
+.elist{display:flex;flex-direction:column;gap:4px}
+.egrp{font-size:.75rem;font-weight:700;color:var(--ink-3);padding:10px 8px 2px;letter-spacing:.04em}
+.eitem{text-align:left;cursor:pointer;background:transparent;border:0;border-radius:9px;padding:9px 10px;width:100%}
+.eitem:hover{background:var(--surface)}
+.eitem[aria-current="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--accent)}
+.eitem span{display:block;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eitem small{color:var(--ink-3);font-size:.76rem}
+#e_body{min-height:360px;font-size:1rem;line-height:1.85}
+.counter{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:.85rem;color:var(--ink-2);align-items:center}
+.counter b{color:var(--ink)}
+.bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;flex-basis:100%}
+.bar div{height:100%;border-radius:999px;transition:width .2s}
+.ref details{border-top:1px solid var(--line);padding:9px 0}
+.ref summary{cursor:pointer;font-weight:500;font-size:.9rem}
+.ref details p{margin:6px 0 0;font-size:.84rem;white-space:pre-wrap;color:var(--ink-2)}
+.ref details p b{color:var(--ink)}
+
+.spec{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 110px 150px;gap:14px;align-items:center;padding:12px 18px;border-top:1px solid var(--line);cursor:pointer}
+.spec:first-child{border-top:0}
+.spec:hover{background:var(--surface-2)}
+.spec strong{font-weight:500}
+
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.q p{margin:0}
+.q .ans{font-size:.86rem;color:var(--ink-2);white-space:pre-wrap;max-height:5.4em;overflow:hidden}
+.timer{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.timer .t{font-size:2rem;font-weight:700;min-width:3.6ch}
+
+.ov{position:fixed;inset:0;background:rgba(15,20,30,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:40;overflow-y:auto}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column}
+.mh{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.mh h2{font-size:1.15rem}
+.mb{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.mb h3{font-size:.85rem;color:var(--ink-2);font-weight:700;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
+.mb h3:first-child{border-top:0;padding-top:0;margin-top:0}
+.mf{display:flex;gap:8px;align-items:center;padding:14px 22px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface);border-radius:0 0 16px 16px}
+.checks{display:flex;flex-wrap:wrap;gap:10px 16px}
+.checks label{display:flex;gap:6px;align-items:center;font-size:.9rem;cursor:pointer;min-height:28px}
+.checks input{width:17px;height:17px;accent-color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 18px;border-radius:10px;font-size:.9rem;z-index:60;max-width:calc(100% - 32px)}
+.sheet{position:fixed;inset:0;z-index:45;background:rgba(15,20,30,.45);display:flex;align-items:flex-end}
+.sheet-in{background:var(--surface);width:100%;border-radius:18px 18px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;max-height:80vh;overflow-y:auto}
+
+@media (max-width:1100px){.ess{grid-template-columns:200px minmax(0,1fr)}.ess .ref{grid-column:1/-1}.cal-wrap{grid-template-columns:1fr}}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .side{display:none}
+  .main{padding-inline:16px;padding-block:0 calc(88px + env(safe-area-inset-bottom,0px))}
+  .mtop{display:flex;align-items:center;gap:8px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:12px;margin-bottom:4px}
+  .mtop b{font-size:1.05rem}
+  .bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+  .bnav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;color:var(--ink-3);padding:6px 0;cursor:pointer;min-height:52px}
+  .bnav button svg{width:22px;height:22px}
+  .bnav button[aria-current="page"]{color:var(--accent);font-weight:700}
+  .ph h1{font-size:1.35rem}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hgrid,.two-col,.ess{grid-template-columns:1fr}
+  .sumstrip{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sumstrip div:nth-child(4){border-left:0}
+  .sumstrip div:nth-child(n+4){border-top:1px solid var(--line)}
+  .tr.th{display:none}
+  .tr{grid-template-columns:minmax(0,1fr) 118px;gap:6px 10px;padding:14px 16px}
+  .tr .co{grid-column:1;grid-row:1}
+  .tr .stc{grid-column:2;grid-row:1}
+  .tr .cell{grid-column:1;white-space:normal}
+  .tr .cell.hide-m{display:none}
+  .tr .mlabel{display:inline;color:var(--ink-3);margin-right:6px}
+  .tr .ddc{grid-column:2;grid-row:2;justify-self:end}
+  .spec{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px}
+  .spec .hide-m{display:none}
+  .day{min-height:58px;padding:4px;align-items:center}
+  .day .pill,.day .more{display:none}
+  .dots{display:flex;justify-content:center}
+  .steps{grid-template-columns:1fr}
+  .ov{padding:0}
+  .modal{border-radius:0;min-height:100%;max-width:none}
+  .mf{border-radius:0;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:520px){.g2,.g3{grid-template-columns:1fr}.toolbar .in{max-width:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <div class="main">
+    <div class="mtop" id="mtop"></div>
+    <div class="page" id="view"></div>
+  </div>
+</div>
+<nav class="bnav" id="bnav" aria-label="주요 메뉴"></nav>
+<div id="modal-root"></div>
+<div id="sheet-root"></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+const IC={
+ home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ find:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+ apps:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+ stories:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+ essays:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/>',
+ specs:'<circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/>',
+ qs:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+ menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ left:'<path d="m15 6-6 6 6 6"/>', right:'<path d="m9 6 6 6-6 6"/>'
+};
+const ico=k=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
+const PAGES=[
+ {grp:'',items:[{id:'home',label:'홈'},{id:'cal',label:'캘린더'}]},
+ {grp:'지원 관리',items:[{id:'find',label:'공고 찾기'},{id:'apps',label:'지원 현황'}]},
+ {grp:'서류 준비',items:[{id:'stories',label:'경험 은행'},{id:'essays',label:'자소서'},{id:'specs',label:'스펙 관리'}]},
+ {grp:'면접 준비',items:[{id:'qs',label:'면접 연습'}]},
+ {grp:'',items:[{id:'settings',label:'설정·백업'}]},
+];
+const ALLP=PAGES.flatMap(g=>g.items);
+const BNAV=['home','cal','apps','essays'];
+const STATUS=[
+ {k:'관심',c:'var(--ink-3)'},{k:'작성중',c:'var(--accent)'},{k:'지원완료',c:'var(--accent-ink)'},
+ {k:'필기·인적성',c:'var(--stage)'},{k:'면접',c:'var(--stage)'},{k:'최종합격',c:'var(--ok)'},{k:'불합격',c:'var(--due)'},{k:'포기',c:'var(--ink-3)'}
+];
+const SK=STATUS.map(s=>s.k);
+const ACTIVE=['관심','작성중','지원완료','필기·인적성','면접'];
+const APPLIED=['지원완료','필기·인적성','면접','최종합격','불합격'];
+const PASSED=['필기·인적성','면접','최종합격'];
+const TAGS=['직무전문성','데이터분석','문제해결','리더십','협업','고객응대','도전·성장','AI·디지털','꼼꼼함','글로벌'];
+const QCAT=['공통','직무','인성','회사별'];
+const SPECK=['어학','자격증','학력','수상·활동','교육·수료'];
+const DOCS=[['resume','이력서'],['essay','자소서'],['photo','증명사진'],['portfolio','포트폴리오'],['proof','성적·자격 증빙']];
+const KIND={start:'접수 시작',due:'서류 마감',stage:'전형 일정',exam:'시험·스펙',personal:'개인 일정'};
+const KORD=Object.keys(KIND);
+const QUICK_KW=['SCM','구매','물류','생산관리','품질','영업관리','데이터분석','마케팅','인사','재무'];
+const BASIC_QS=[
+ ['1분 자기소개를 해 주세요.','공통'],['우리 회사에 지원한 이유는 무엇인가요?','공통'],['입사 후 이루고 싶은 목표는 무엇인가요?','공통'],
+ ['마지막으로 하고 싶은 말이 있나요?','공통'],['이 직무에 필요한 역량은 무엇이고, 본인은 어떻게 준비했나요?','직무'],
+ ['직무와 관련해 가장 성과가 컸던 경험을 말해 주세요.','직무'],['데이터를 활용해 문제를 해결한 경험이 있나요?','직무'],
+ ['팀에서 갈등이 생겼을 때 어떻게 해결했나요?','인성'],['실패했던 경험과 그로부터 배운 점은?','인성'],
+ ['본인의 장점과 단점은 무엇인가요?','인성'],['스트레스를 어떻게 관리하나요?','인성'],['상사와 의견이 다를 때 어떻게 하겠습니까?','인성']
+];
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const arr=v=>Array.isArray(v)?v:[];
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr=()=>iso(new Date());
+const okDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
+const toD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+function dday(s){if(!okDate(s))return null;const n=new Date();n.setHours(0,0,0,0);return Math.round((toD(s)-n)/86400000)}
+const ddLabel=n=>n===null?'':n===0?'D-DAY':n>0?`D-${n}`:`D+${-n}`;
+const ddCls=n=>n===null||n<0?'':n<=3?'hot':n<=7?'warm':'';
+const WD='일월화수목금토';
+const md=s=>okDate(s)?`${+s.slice(5,7)}.${+s.slice(8,10)}`:'';
+const mdw=s=>okDate(s)?`${md(s)} (${WD[toD(s).getDay()]})`:'';
+const full=s=>okDate(s)?`${s.replace(/-/g,'.')} (${WD[toD(s).getDay()]})`:'';
+const stOf=k=>STATUS.find(s=>s.k===k)||STATUS[0];
+const stHtml=k=>`<span class="st" style="--c:${stOf(k).c}"><i></i>${esc(k||'관심')}</span>`;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2400)}
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+
+/* ---------- store: server (per-person private) → this browser → memory ---------- */
+const COLS=['apps','stories','essays','qs','specs','todos','events'];
+const S={};COLS.forEach(c=>S[c]=[]);
+let ai=null, aiOff=false, dl=null;
+const Store={mode:'boot',base:null,LK:'jobnote_v2',
+  async init(){
+    const C=window.claude;let db=null,user=null;
+    if(C&&C.use){[db,user,ai,dl]=await Promise.all(['db','user','sample','downloads'].map(n=>C.use(n).catch(()=>null)))}
+    if(db&&user){
+      const uid=await user.id().catch(()=>null);
+      if(uid){try{
+        const base=db.doc('data/users/'+uid+'/notebook');const m=await base.get();
+        if(!m.exists)await base.set({created:Date.now()});
+        this.base=base;this.mode='server';
+      }catch(e){this.base=null}}
+    }
+    if(this.mode!=='server'){
+      const data=lsGet(this.LK,null);
+      this.mode=lsSet(this.LK+'_probe',1)?'local':'memory';
+      if(data)COLS.forEach(c=>S[c]=arr(data[c]));
+      render(true);return;
+    }
+    COLS.forEach(c=>this.base.collection(c).onSnapshot(snap=>{S[c]=snap.docs.map(d=>({id:d.id,...d.data()}));schedule()},()=>toast('일부 데이터를 불러오지 못했어요. 새로고침해 주세요.')));
+    render(true);
+  },
+  persist(){if(this.mode==='local'){const o={};COLS.forEach(c=>o[c]=S[c]);if(!lsSet(this.LK,o))toast('이 기기에 저장하지 못했어요. 백업을 받아 두세요.')}},
+  async save(c,item){
+    const {id,...data}=item;data.updated=Date.now();
+    if(this.mode==='server'){
+      try{if(id){await this.base.collection(c).doc(id).set(data);return id}const r=await this.base.collection(c).add(data);return r.id}
+      catch(e){toast(e&&e.code==='quota_exceeded'?'저장 공간이 가득 찼어요. 안 쓰는 항목을 지워 주세요.':'저장하지 못했어요. 잠시 후 다시 시도해 주세요.');return null}
+    }
+    let nid=id;
+    if(id){const i=S[c].findIndex(x=>x.id===id);if(i>=0)S[c][i]={id,...data};else S[c].push({id,...data})}
+    else{nid='l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);S[c].push({id:nid,...data})}
+    this.persist();schedule();return nid;
+  },
+  async del(c,id){
+    if(this.mode==='server'){try{await this.base.collection(c).doc(id).delete()}catch(e){toast('삭제하지 못했어요.')}return}
+    S[c]=S[c].filter(x=>x.id!==id);this.persist();schedule();
+  }
+};
+let rq=false;function schedule(){if(rq)return;rq=true;requestAnimationFrame(()=>{rq=false;render()})}
+
+/* ---------- AI ---------- */
+function aiErr(e){
+  const c=e&&e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(c)){aiOff=true;return 'Claude 사용이 허용되지 않아 AI 기능을 쓸 수 없어요.'}
+  if(c==='rate_limited')return '요청이 많아요. 잠시 후 다시 눌러 주세요.';
+  if(c==='invalid_json')return '답을 정리하지 못했어요. 한 번 더 눌러 주세요.';
+  if(c==='session_expired')return '다시 로그인해 주세요.';
+  if(c==='refused')return '이 내용으로는 답을 받을 수 없어요. 입력을 바꿔 보세요.';
+  if(c==='cancelled')return '';
+  return '연결이 잠시 끊겼어요. 다시 시도해 주세요.';
+}
+const aiReady=()=>!!ai&&!aiOff;
+async function askJSON(p,o={}){if(!ai)throw{code:'not_granted'};return ai.json(p,{modelTier:'default',...o})}
+const aiNote=()=>!ai?'<p class="note">AI 추천은 Claude 안에서 여는 버전에서만 쓸 수 있어요. 나머지 기능은 모두 쓸 수 있어요.</p>':aiOff?'<p class="note">Claude 사용이 허용되지 않아 AI 기능이 꺼져 있어요.</p>':'';
+const thinking=t=>`<div class="thinking"><i></i><i></i><i></i>${t}</div>`;
+const storySummary=(n=12)=>S.stories.slice(0,n).map(s=>`- ${s.title}${s.org?' ('+s.org+')':''}: ${[s.s,s.a,s.r].filter(Boolean).join(' / ').slice(0,220)}`).join('\n')||'(아직 없음)';
+
+/* ---------- derived ---------- */
+function nextOf(a){
+  const c=[];const t=todayStr();const pre=['관심','작성중'].includes(a.status||'관심');
+  if(pre){if(okDate(a.startDate)&&a.startDate>=t)c.push([a.startDate,'접수 시작']);if(okDate(a.deadline))c.push([a.deadline,'서류 마감'])}
+  if(['포기','불합격','최종합격'].includes(a.status))return null;
+  if(okDate(a.testDate)&&a.testDate>=t)c.push([a.testDate,'필기·인적성']);
+  if(okDate(a.interviewDate)&&a.interviewDate>=t)c.push([a.interviewDate,'면접']);
+  if(okDate(a.resultDate)&&a.resultDate>=t)c.push([a.resultDate,'결과 발표']);
+  c.sort((x,y)=>x[0].localeCompare(y[0]));
+  return c.find(x=>x[0]>=t)||(pre&&c.length?c[c.length-1]:null);
+}
+function allEvents(){
+  const ev=[];
+  for(const a of S.apps){
+    const dead=['포기','불합격'].includes(a.status);
+    if(okDate(a.startDate))ev.push({date:a.startDate,kind:'start',title:a.company,sub:'접수 시작'+(a.role?' · '+a.role:''),ref:'apps:'+a.id,dim:dead});
+    if(okDate(a.deadline))ev.push({date:a.deadline,kind:'due',title:a.company,sub:'서류 마감'+(a.role?' · '+a.role:''),ref:'apps:'+a.id,dim:dead||APPLIED.includes(a.status)});
+    if(okDate(a.testDate))ev.push({date:a.testDate,kind:'stage',title:a.company,sub:'필기·인적성',ref:'apps:'+a.id,dim:dead});
+    if(okDate(a.interviewDate))ev.push({date:a.interviewDate,kind:'stage',title:a.company,sub:'면접',ref:'apps:'+a.id,dim:dead});
+    if(okDate(a.resultDate))ev.push({date:a.resultDate,kind:'stage',title:a.company,sub:'결과 발표',ref:'apps:'+a.id});
+  }
+  for(const s of S.specs){
+    if(okDate(s.examDate))ev.push({date:s.examDate,kind:'exam',title:s.name,sub:'시험',ref:'specs:'+s.id});
+    if(okDate(s.expiry))ev.push({date:s.expiry,kind:'exam',title:s.name,sub:'유효기간 만료',ref:'specs:'+s.id});
+  }
+  for(const e of S.events)if(okDate(e.date))ev.push({date:e.date,kind:'personal',title:e.title,sub:e.memo||'개인 일정',ref:'events:'+e.id});
+  return ev.sort((a,b)=>a.date.localeCompare(b.date)||KORD.indexOf(a.kind)-KORD.indexOf(b.kind));
+}
+function appStats(){
+  const a=S.apps;const applied=a.filter(x=>APPLIED.includes(x.status)).length;const passed=a.filter(x=>PASSED.includes(x.status)).length;
+  return{total:a.length,active:a.filter(x=>ACTIVE.includes(x.status||'관심')).length,applied,passed,offer:a.filter(x=>x.status==='최종합격').length,rate:applied?Math.round(passed/applied*100):null};
+}
+
+/* ---------- view state ---------- */
+let page=lsGet('jn_page','home');if(!ALLP.some(p=>p.id===page))page='home';
+{const h=(location.hash||'').slice(1);if(ALLP.some(p=>p.id===h))page=h}
+let appView=lsGet('jn_appview','list'), appFilter='진행 중', appQ='';
+let calY=new Date().getFullYear(), calM=new Date().getMonth(), calSel=todayStr();
+let tagFilter=null, essayId=null;
+const F={kw:arr(lsGet('jn_kw',[])).slice(0,8),cond:'',roles:null,rolesBusy:false,rolesErr:'',paste:'',url:'',posts:null,postBusy:false,postErr:'',mkEssays:true};
+const D={text:'',target:'',ideas:null,busy:false,err:''};
+const EA={forId:null,mode:'match',list:null,fb:null,busy:false,err:''};
+const QA={appId:'',list:null,busy:false,err:''};
+let tSec=60,tLeft=60,tRun=null;
+{const fs=lsGet('jn_fs','m');if(fs!=='m')document.documentElement.dataset.fs=fs}
+
+/* ---------- shell ---------- */
+function navCounts(){return{apps:S.apps.filter(a=>ACTIVE.includes(a.status||'관심')).length,essays:S.essays.length,stories:S.stories.length,specs:S.specs.length,qs:S.qs.length}}
+const storeLabel=()=>Store.mode==='server'?'내 계정에 자동 저장 중':Store.mode==='local'?'이 기기 브라우저에 저장 중':Store.mode==='memory'?'저장되지 않는 상태예요':'불러오는 중…';
+function renderShell(){
+  const c=navCounts();
+  document.getElementById('side').innerHTML=`<div class="logo"><i></i>취업 수첩</div>`+
+    PAGES.map(g=>`<div class="navgrp">${g.grp?`<p>${g.grp}</p>`:''}${g.items.map(p=>`<button class="nav" data-go="${p.id}" ${p.id===page?'aria-current="page"':''}>${ico(p.id)}${p.label}${c[p.id]?`<span class="cnt num">${c[p.id]}</span>`:''}</button>`).join('')}</div>`).join('')+
+    `<div class="side-foot">${storeLabel()}</div>`;
+  document.getElementById('mtop').innerHTML=`<div class="logo" style="padding:0"><i></i>취업 수첩</div><span class="sp"></span><span class="faint small">${mdw(todayStr())}</span>`;
+  document.getElementById('bnav').innerHTML=BNAV.map(id=>`<button data-go="${id}" ${id===page?'aria-current="page"':''}>${ico(id)}${ALLP.find(x=>x.id===id).label}</button>`).join('')+
+    `<button data-sheet ${BNAV.includes(page)?'':'aria-current="page"'}>${ico('menu')}전체</button>`;
+}
+function go(id){page=id;lsSet('jn_page',id);document.getElementById('sheet-root').innerHTML='';render(true);window.scrollTo({top:0})}
+document.addEventListener('click',e=>{
+  if(e.target.closest('#modal-root'))return;
+  const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+  if(e.target.closest('[data-sheet]'))openSheet();
+});
+function openSheet(){
+  const r=document.getElementById('sheet-root');
+  r.innerHTML=`<div class="sheet" id="sh"><div class="sheet-in">${PAGES.map(g=>`<div class="navgrp">${g.grp?`<p>${g.grp}</p>`:''}${g.items.map(p=>`<button class="nav" data-go="${p.id}" ${p.id===page?'aria-current="page"':''}>${ico(p.id)}${p.label}</button>`).join('')}</div>`).join('')}</div></div>`;
+  document.getElementById('sh').addEventListener('click',e=>{if(e.target.id==='sh')r.innerHTML=''});
+}
+
+/* ---------- pages ---------- */
+const ph=(t,sub,act='')=>`<div class="ph"><div><h1>${t}</h1>${sub?`<p>${sub}</p>`:''}</div><span class="sp"></span><div class="row">${act}</div></div>`;
+const storeBanner=()=>Store.mode==='local'&&!lsGet('jn_hidebanner',false)?`<div class="banner">기록은 이 휴대폰에만 저장돼요. 다른 기기로 옮기거나 잃어버리지 않도록 설정·백업에서 가끔 백업 파일을 받아 두세요. <button class="btn txt sm" data-hidebanner>알겠어요</button></div>`:Store.mode==='memory'?`<div class="banner">미리보기 화면이라 입력한 내용이 저장되지 않아요.</div>`:'';
+function feedHint(){if(!F.kw.length){return ''}const t=todayStr();const m=arr(FEED.list).filter(p=>(!okDate(p.end)||p.end>=t)&&scorePost(p,F.kw).s>0);if(!m.length)return '';const soon=m.filter(p=>{const n=dday(p.end);return n!==null&&n<=3}).length;return `<button class="card" data-go="find" style="text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px"><span style="flex:1"><b>내 키워드에 맞는 진행 중 공고 ${m.length}개</b><br><span class="small muted">${soon?`3일 안에 마감되는 공고 ${soon}개 · `:''}공고 찾기에서 보기</span></span><span class="faint">›</span></button>`}
+function evRow(e){const n=dday(e.date);return `<button class="li" data-ref="${e.ref}"><span class="date num">${mdw(e.date)}</span><span><strong><i class="kind k-${e.kind}"></i>${esc(e.title)}</strong><small>${esc(e.sub)}</small></span><span class="dd ${ddCls(n)}">${ddLabel(n)}</span></button>`}
+
+function pHome(){
+  const st=appStats();const t=todayStr();const all=allEvents();
+  const ev=all.filter(e=>e.date>=t&&dday(e.date)<=14&&!e.dim).slice(0,8);
+  const week=all.filter(e=>e.kind==='due'&&!e.dim&&dday(e.date)>=0&&dday(e.date)<=7).length;
+  const empty=!COLS.some(c=>S[c].length);
+  const todos=[...S.todos].sort((a,b)=>(a.done?1:0)-(b.done?1:0)||(a.created||0)-(b.created||0));
+  const recent=S.apps.filter(a=>APPLIED.includes(a.status)).sort((a,b)=>(b.appliedDate||'').localeCompare(a.appliedDate||'')).slice(0,5);
+  const expiring=S.specs.filter(s=>okDate(s.expiry)&&dday(s.expiry)<=90).sort((a,b)=>a.expiry.localeCompare(b.expiry));
+  const dist=STATUS.map(s=>({...s,n:S.apps.filter(a=>(a.status||'관심')===s.k).length})).filter(s=>s.n);
+  return `${ph(full(t),'오늘 챙길 일정과 지원 진행 상황이에요.',`<button class="btn sec" data-new-event="${t}">${ico('plus')}일정</button><button class="btn" data-new-app>${ico('plus')}지원 추가</button>`)}
+  ${storeBanner()}
+  ${feedHint()}
+  ${empty?`<div class="card"><div class="card-h"><h2>처음 시작하기</h2></div>
+    <div class="steps">
+      <button class="step" data-go="find"><b>1단계</b><strong>공고 찾기</strong><span>관심 키워드로 직무·기업을 추천받고, 공고를 붙여넣어 바로 등록해요.</span></button>
+      <button class="step" data-go="stories"><b>2단계</b><strong>경험 정리</strong><span>해본 일을 적으면 자소서 소재를 뽑아 줘요. STAR로 정리해 두세요.</span></button>
+      <button class="step" data-go="specs"><b>3단계</b><strong>스펙 등록</strong><span>어학 점수와 자격증, 만료일을 넣어 두면 캘린더에 알려 줘요.</span></button>
+    </div></div>`:''}
+  <div class="kpis">
+    <div class="kpi"><span>지원 완료</span><b class="num">${st.applied}</b><small>누적 지원한 공고</small></div>
+    <div class="kpi"><span>진행 중</span><b class="num">${st.active}</b><small>관심·작성·전형 중</small></div>
+    <div class="kpi"><span>이번 주 서류 마감</span><b class="num" style="${week?'color:var(--due)':''}">${week}</b><small>7일 이내, 아직 미지원</small></div>
+    <div class="kpi"><span>서류 통과율</span><b class="num">${st.rate===null?'—':st.rate+'%'}</b><small>${st.applied?`${st.applied}곳 중 ${st.passed}곳`:'지원 후 계산돼요'}</small></div>
+  </div>
+  <div class="hgrid">
+    <div class="card"><div class="card-h"><h2>다가오는 2주 일정</h2><span class="sp"></span><button class="btn txt sm" data-go="cal">캘린더</button></div>
+      ${ev.length?`<div class="list">${ev.map(evRow).join('')}</div>`:`<div class="empty">2주 안에 잡힌 일정이 없어요.<br>지원 현황에 접수 기간을 넣으면 여기와 캘린더에 표시돼요.</div>`}
+    </div>
+    <div class="card"><div class="card-h"><h2>할 일</h2><span class="sp"></span><span class="faint small num">${S.todos.filter(x=>!x.done).length}개 남음</span></div>
+      <form class="row" id="todo-form" style="margin-bottom:8px;flex-wrap:nowrap"><input class="in" id="todo_in" placeholder="예: 토익 접수, 자소서 2번 문항 마무리" autocomplete="off" aria-label="할 일"><button class="btn sec" type="submit">추가</button></form>
+      <div class="list">${todos.map(x=>`<div class="todo ${x.done?'done':''}"><input type="checkbox" data-todo="${x.id}" ${x.done?'checked':''} aria-label="완료 표시"><span>${esc(x.text)}</span><button class="xbtn" data-deltodo="${x.id}" aria-label="삭제">×</button></div>`).join('')||'<p class="note">해야 할 일을 적어 두세요.</p>'}</div>
+    </div>
+  </div>
+  <div class="hgrid">
+    <div class="card"><div class="card-h"><h2>최근 지원한 공고</h2><span class="sp"></span><button class="btn txt sm" data-go="apps">전체 보기</button></div>
+      ${recent.length?`<div class="list">${recent.map(a=>`<button class="li" data-edit-app="${a.id}"><span class="date num">${md(a.appliedDate)||'—'}</span><span><strong>${esc(a.company)}</strong><small>${esc(a.role||'직무 미정')}</small></span>${stHtml(a.status)}</button>`).join('')}</div>`:`<div class="empty">아직 지원 완료한 공고가 없어요.</div>`}
+    </div>
+    <div class="card"><div class="card-h"><h2>지원 단계 분포</h2></div>
+      ${dist.length?`<div class="stack">${dist.map(s=>`<div style="flex:${s.n};background:${s.c}" title="${s.k} ${s.n}"></div>`).join('')}</div>
+      <div class="legend">${dist.map(s=>`<span class="st" style="--c:${s.c}"><i></i>${s.k} <b class="num">${s.n}</b></span>`).join('')}</div>`:'<p class="note">지원을 추가하면 단계별로 보여요.</p>'}
+      ${expiring.length?`<h2 style="font-size:.95rem;margin:18px 0 6px">스펙 유효기간</h2>${expiring.map(s=>`<div class="row small" style="padding:4px 0"><span>${esc(s.name)} ${esc(s.score||'')}</span><span class="sp"></span><span class="dd ${dday(s.expiry)<=30?'hot':'warm'}">${dday(s.expiry)<0?'만료됨':ddLabel(dday(s.expiry))}</span></div>`).join('')}`:''}
+    </div>
+  </div>`;
+}
+
+function pCal(){
+  const first=new Date(calY,calM,1);const start=new Date(calY,calM,1-first.getDay());
+  const by={};allEvents().forEach(e=>{(by[e.date]=by[e.date]||[]).push(e)});
+  const t=todayStr();const cells=[];
+  for(let i=0;i<42;i++)cells.push(new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));
+  const rows=cells[35].getMonth()!==calM?35:42;
+  const sel=by[calSel]||[];
+  return `${ph('캘린더','접수 시작일, 서류 마감일, 전형 일정, 스펙 시험일을 한 달 단위로 봐요.',`<button class="btn" data-new-event="${calSel}">${ico('plus')}개인 일정</button>`)}
+  <div class="cal-wrap">
+    <div class="card" style="padding:16px">
+      <div class="cal-head"><button class="btn sec sm" data-cal="-1" aria-label="이전 달">${ico('left')}</button><h2 class="num">${calY}년 ${calM+1}월</h2><button class="btn sec sm" data-cal="1" aria-label="다음 달">${ico('right')}</button><span class="sp"></span><button class="btn sec sm" data-cal="0">오늘</button></div>
+      <div class="cal">${[...WD].map((w,i)=>`<div class="wd ${i===0?'sun':''}">${w}</div>`).join('')}
+      ${cells.slice(0,rows).map(d=>{const s=iso(d);const es=by[s]||[];return `<button class="day ${d.getMonth()!==calM?'out':''} ${s===t?'today':''} ${d.getDay()===0?'sun':''}" data-day="${s}" aria-selected="${s===calSel}" aria-label="${full(s)}, 일정 ${es.length}개">
+        <span class="dn num">${d.getDate()}</span>
+        ${es.slice(0,3).map(e=>`<span class="pill k-${e.kind}" style="${e.dim?'opacity:.5':''}">${e.kind==='due'?'마감 ':e.kind==='start'?'시작 ':''}${esc(e.title)}</span>`).join('')}
+        ${es.length>3?`<span class="more">+${es.length-3}</span>`:''}
+        <span class="dots">${es.slice(0,4).map(e=>`<i class="k-${e.kind}"></i>`).join('')}</span></button>`}).join('')}</div>
+      <div class="cal-legend">${KORD.map(k=>`<span><i class="kind k-${k}"></i>${KIND[k]}</span>`).join('')}</div>
+    </div>
+    <div class="card"><div class="card-h"><h2>${full(calSel)}</h2></div>
+      ${sel.length?`<div class="list">${sel.map(e=>`<button class="li" data-ref="${e.ref}" style="grid-template-columns:minmax(0,1fr) auto"><span><strong><i class="kind k-${e.kind}"></i>${esc(e.title)}</strong><small>${esc(e.sub)}</small></span><span class="faint small">${KIND[e.kind]}</span></button>`).join('')}</div>`:'<p class="note">이 날은 일정이 없어요.</p>'}
+      <button class="btn sec sm" style="margin-top:12px" data-new-event="${calSel}">${ico('plus')}이 날 일정 추가</button>
+    </div>
+  </div>`;
+}
+
+function pApps(){
+  const st=appStats();const q=appQ.trim().toLowerCase();
+  const filt={'진행 중':a=>ACTIVE.includes(a.status||'관심'),'지원한 공고':a=>APPLIED.includes(a.status),'전체':()=>true,'종료':a=>['최종합격','불합격','포기'].includes(a.status)}[appFilter]||(()=>true);
+  const list=S.apps.filter(filt).filter(a=>!q||((a.company||'')+' '+(a.role||'')).toLowerCase().includes(q));
+  const key=a=>{const n=nextOf(a);return n?n[0]:'9999'};
+  list.sort((a,b)=>key(a).localeCompare(key(b))||(a.company||'').localeCompare(b.company||''));
+  return `${ph('지원 현황','어디에 지원했고 지금 어느 단계인지 한눈에 봐요.',`<button class="btn sec" data-go="find">공고 찾기</button><button class="btn" data-new-app>${ico('plus')}지원 추가</button>`)}
+  <div class="sumstrip">
+    <div><span>전체 기록</span><b class="num">${st.total}</b></div>
+    <div><span>진행 중</span><b class="num">${st.active}</b></div>
+    <div><span>지원 완료</span><b class="num">${st.applied}</b></div>
+    <div><span>서류 통과</span><b class="num">${st.passed}${st.rate!==null?` <small class="faint" style="font-size:.8rem;font-weight:500">${st.rate}%</small>`:''}</b></div>
+    <div><span>최종 합격</span><b class="num" style="${st.offer?'color:var(--ok)':''}">${st.offer}</b></div>
+  </div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="보기 방식"><button data-appview="list" aria-pressed="${appView==='list'}">목록</button><button data-appview="board" aria-pressed="${appView==='board'}">단계별 보드</button></div>
+    <div class="chips">${['진행 중','지원한 공고','전체','종료'].map(f=>`<button class="fchip" data-appfilter="${f}" aria-pressed="${appFilter===f}">${f}</button>`).join('')}</div>
+    <span class="sp"></span>
+    <input class="in" id="appq" placeholder="회사·직무 검색" value="${esc(appQ)}" autocomplete="off" aria-label="회사·직무 검색">
+  </div>
+  ${!S.apps.length?`<div class="empty">아직 기록한 지원이 없어요. ‘공고 찾기’에서 추천받거나 ‘지원 추가’를 눌러 보세요.</div>`:
+  appView==='list'?(list.length?`<div class="tbl">
+    <div class="tr th"><span>회사 · 직무</span><span>단계</span><span>접수 기간</span><span>지원일</span><span>다음 일정</span><span>D-day</span></div>
+    ${list.map(a=>{const n=nextOf(a);const dn=n?dday(n[0]):null;return `<div class="tr" data-edit-app="${a.id}" role="button" tabindex="0">
+      <div class="co"><strong>${esc(a.company)}</strong><small>${esc(a.role||'직무 미정')}${a.location?' · '+esc(a.location):''}</small></div>
+      <div class="stc"><select class="stsel" data-status="${a.id}" aria-label="${esc(a.company)} 단계 변경">${SK.map(k=>`<option ${k===(a.status||'관심')?'selected':''}>${k}</option>`).join('')}</select></div>
+      <div class="cell num"><span class="mlabel">접수</span>${a.startDate||a.deadline?`${md(a.startDate)||'?'} ~ ${md(a.deadline)||'?'}`:'—'}</div>
+      <div class="cell num hide-m">${md(a.appliedDate)||'—'}</div>
+      <div class="cell"><span class="mlabel">다음</span>${n?`${esc(n[1])} · <span class="num">${mdw(n[0])}</span>`:'—'}</div>
+      <div class="ddc">${n?`<span class="dd ${ddCls(dn)}">${ddLabel(dn)}</span>`:''}</div>
+    </div>`}).join('')}</div>`:`<div class="empty">조건에 맞는 지원이 없어요.</div>`)
+  :`<div class="board-scroll"><div class="board">${STATUS.map(s=>{const items=list.filter(a=>(a.status||'관심')===s.k);return `<div class="col"><div class="col-h"><span class="st" style="--c:${s.c}"><i></i>${s.k}</span><span class="faint num">${items.length}</span></div>
+    ${items.map(a=>{const n=nextOf(a);return `<button class="bcard" data-edit-app="${a.id}"><strong>${esc(a.company)}</strong><small>${esc(a.role||'직무 미정')}</small>${n?`<small class="num">${esc(n[1])} ${md(n[0])} <span class="dd ${ddCls(dday(n[0]))}">${ddLabel(dday(n[0]))}</span></small>`:''}</button>`}).join('')}</div>`}).join('')}</div></div>`}`;
+}
+
+/* ---------- 자소설닷컴 추천 공고 ---------- */
+const FEED={list:null,updated:null,err:'',loading:false,mode:lsGet('jn_feedmode','rec'),onlyNew:false,career:''};
+const FEED_SEEN=lsGet('jn_feed_seen',0);
+async function loadFeed(force){
+  if(FEED.loading||(FEED.list&&!force))return;
+  FEED.loading=true;FEED.err='';
+  if(!FEED.list){const c=lsGet('jn_feed',null);if(c){FEED.list=arr(c.postings);FEED.updated=c.updated}}
+  if(page==='find')render(true);
+  let ok=false;
+  for(const u of ['postings.json?t='+Date.now(),'https://raw.githubusercontent.com/nakyoung-naya/dfddf/main/postings.json']){
+    try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const j=await r.json();FEED.list=arr(j.postings);FEED.updated=j.updated;lsSet('jn_feed',{postings:FEED.list,updated:FEED.updated});ok=true;break}catch(e){}
+  }
+  if(!ok&&!FEED.list)FEED.err='공고를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.';
+  if(ok)lsSet('jn_feed_seen',Date.now());
+  FEED.loading=false;if(page==='find')render(true);
+}
+function scorePost(p,kws){
+  const t=((p.title||'')+' '+(p.duties||'')+' '+(p.desc||'')).toLowerCase(),c=(p.company||'').toLowerCase();let s=0;const hit=[];
+  for(const k of kws){const q=k.toLowerCase();let w=0;if(t.includes(q))w+=3;if(c.includes(q))w+=2;if(w){s+=w;hit.push(k)}}
+  return{s,hit};
+}
+function pFind(){
+  const t=todayStr();const kws=F.kw;
+  const open=arr(FEED.list).filter(p=>!okDate(p.end)||p.end>=t).filter(p=>!FEED.career||p.career===FEED.career);
+  let rows=open.map(p=>({p,...scorePost(p,kws),isNew:(p.firstSeen||0)>FEED_SEEN&&FEED_SEEN>0}));
+  if(FEED.mode==='rec')rows=rows.filter(x=>x.s>0).sort((a,b)=>b.s-a.s||(a.p.end||'9').localeCompare(b.p.end||'9'));
+  else rows.sort((a,b)=>(a.p.end||'9').localeCompare(b.p.end||'9'));
+  if(FEED.onlyNew)rows=rows.filter(x=>x.isNew);
+  const newCnt=open.filter(p=>(p.firstSeen||0)>FEED_SEEN&&FEED_SEEN>0).length;
+  const shown=rows.slice(0,80);
+  const upd=FEED.updated?new Date(FEED.updated):null;
+  const updLabel=upd?`${upd.getMonth()+1}.${upd.getDate()} ${pad(upd.getHours())}:${pad(upd.getMinutes())}`:'';
+  return `${ph('공고 찾기','관심 키워드를 정하면 자소설닷컴에 올라온 공고 중 맞는 것을 골라 보여 줘요. 공고는 매일 오전 7시·오후 4시에 새로 모아요.')}
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="field"><span class="lbl">내 관심 키워드 (입력 후 Enter, 최대 8개)</span>
+      <div class="kw">${kws.map((k,i)=>`<span class="kwchip">${esc(k)}<button data-kwdel="${i}" aria-label="${esc(k)} 지우기">×</button></span>`).join('')}
+      <input id="kwin" placeholder="${kws.length?'더 추가':'예: SCM, 구매, 물류, 생산관리'}" autocomplete="off" aria-label="키워드 입력"></div></div>
+    <div class="quick">${QUICK_KW.filter(k=>!kws.includes(k)).map(k=>`<button data-kwadd="${k}">+ ${k}</button>`).join('')}</div>
+    <p class="note">키워드는 공고 제목, 모집 직무, 회사 이름에서 찾아요. 기업 이름(예: CJ, 코스맥스)을 넣어도 돼요.</p>
+  </div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="보기"><button data-feedmode="rec" aria-pressed="${FEED.mode==='rec'}">추천 공고</button><button data-feedmode="all" aria-pressed="${FEED.mode==='all'}">전체 공고</button></div>
+    <div class="chips">${[['','전체'],['신입','신입'],['인턴','인턴'],['경력','경력']].map(([k,l])=>`<button class="fchip" data-feedcareer="${k}" aria-pressed="${FEED.career===k}">${l}</button>`).join('')}
+      ${newCnt?`<button class="fchip" data-feednew aria-pressed="${FEED.onlyNew}">새 공고 ${newCnt}</button>`:''}</div>
+    <span class="sp"></span>
+    <span class="faint small num">${FEED.loading?'불러오는 중…':updLabel?`업데이트 ${updLabel} · 진행 중 ${arr(FEED.list).length}개`:''}</span>
+    <button class="btn sec sm" data-feedrefresh>새로고침</button>
+  </div>
+  ${FEED.err?`<p class="err">${esc(FEED.err)}</p>`:''}
+  ${FEED.list&&!FEED.list.length&&!FEED.loading?`<div class="empty">아직 모은 공고가 없어요. 공고 수집이 처음 한 번 돌고 나면 여기에 떠요.</div>`:''}
+  ${FEED.list&&FEED.list.length&&FEED.mode==='rec'&&!kws.length?`<div class="empty">위에 관심 키워드를 넣으면 맞는 공고를 골라 드려요.</div>`:''}
+  ${FEED.list&&FEED.list.length&&(kws.length||FEED.mode==='all')&&!rows.length?`<div class="empty">조건에 맞는 진행 중 공고가 없어요. 키워드를 바꾸거나 ‘전체 공고’를 눌러 보세요.</div>`:''}
+  ${shown.length?`<div style="display:flex;flex-direction:column;gap:10px">${shown.map(({p,hit,isNew})=>{const n=dday(p.end);const ad=S.apps.some(a=>a.link===p.url);return `<div class="rec">
+    <div class="row"><strong>${esc(p.company||'회사명 확인')}</strong>${p.career?`<span class="tag">${esc(p.career)}</span>`:''}${isNew?`<span class="tag" style="background:var(--accent-soft);color:var(--accent-ink)">NEW</span>`:''}<span class="sp"></span>${n!==null?`<span class="dd ${ddCls(n)}">${ddLabel(n)}</span>`:''}</div>
+    <p style="color:var(--ink)">${esc(p.title)}</p>
+    ${p.duties?`<p class="small">${esc(p.duties)}</p>`:''}
+    <div class="small faint num">접수 ${okDate(p.start)?mdw(p.start)+(p.startTime?' '+esc(p.startTime):''):'?'} ~ ${okDate(p.end)?mdw(p.end)+(p.endTime?' '+esc(p.endTime):''):'?'}</div>
+    ${hit.length?`<div class="tags">${hit.map(k=>`<span class="tag">#${esc(k)}</span>`).join('')}</div>`:''}
+    <div class="row"><button class="btn sm" data-addfeed="${esc(p.id)}" ${ad?'disabled':''}>${ad?'✓ 지원 현황에 있어요':'+ 지원 현황에 추가'}</button><a class="btn sec sm" href="${esc(p.url)}" target="_blank" rel="noopener">공고 보기 ↗</a></div>
+  </div>`}).join('')}${rows.length>shown.length?`<p class="note">마감이 가까운 순으로 ${shown.length}개까지 보여요. 키워드를 더 좁혀 보세요.</p>`:''}</div>`:''}
+  <p class="note">공고 정보는 자소설닷컴 공개 페이지에서 자동으로 모은 거예요. 지원 전에 ‘공고 보기’에서 원문을 꼭 확인하세요.</p>`;
+}
+
+function pStories(){
+  const list=S.stories.filter(s=>!tagFilter||arr(s.tags).includes(tagFilter));
+  return `${ph('경험 은행','경험을 상황·과제·행동·결과(STAR)로 정리해 두면 어떤 문항에도 꺼내 쓸 수 있어요.',`<button class="btn" data-new-story>${ico('plus')}경험 추가</button>`)}
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="card-h" style="margin:0"><h2>소재 찾기</h2></div>
+    <p class="note" style="margin-top:-8px">아르바이트, 동아리, 수업 과제, 인턴, 대외활동처럼 해본 일을 편하게 적어 보세요. 자소서에 쓸 만한 소재로 바꿔 드려요.</p>
+    <textarea class="in" id="dtext" rows="3" placeholder="예: 카페 아르바이트 1년, 학회 데이터 분석 프로젝트, 교환학생…" aria-label="해본 활동">${esc(D.text)}</textarea>
+    <div class="row"><input class="in" id="dtarget" style="flex:1;min-width:180px" value="${esc(D.target)}" placeholder="지원할 직무 (선택)" aria-label="지원할 직무"><button class="btn ai-btn" data-discover ${D.busy||!aiReady()?'disabled':''}>소재 추천받기</button></div>
+    ${aiNote()}${D.err?`<p class="err">${esc(D.err)}</p>`:''}${D.busy?thinking('소재를 고르는 중…'):''}
+    ${D.ideas?`<div class="grid">${D.ideas.map((x,i)=>`<div class="idea"><strong>${esc(x.title)}</strong><p>${esc(x.angle)}</p>
+      <div class="tags">${arr(x.tags).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+      ${x.ask?`<p class="faint">채울 질문: ${esc(x.ask)}</p>`:''}
+      <button class="btn sec sm" style="align-self:flex-start" data-takeidea="${i}" ${x._taken?'disabled':''}>${x._taken?'✓ 담았어요':'경험 은행에 담기'}</button></div>`).join('')}</div>`:''}
+  </div>
+  <div class="chips"><button class="fchip" data-tag="" aria-pressed="${!tagFilter}">전체 ${S.stories.length}</button>${TAGS.map(t=>`<button class="fchip" data-tag="${t}" aria-pressed="${tagFilter===t}">${t}</button>`).join('')}</div>
+  ${list.length?`<div class="grid">${list.map(s=>`<button class="story" data-edit-story="${s.id}">
+    <span class="per">${esc(s.org||'')}${s.period?' · '+esc(s.period):''}</span><h3>${esc(s.title)}</h3>
+    <div class="star">${['S','T','A','R'].map(k=>`<span class="${s[k.toLowerCase()]?'on':''}">${k}</span>`).join('')}</div>
+    <div class="tags">${arr(s.tags).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></button>`).join('')}</div>`
+  :`<div class="empty">${S.stories.length?'이 태그로 정리한 경험이 없어요.':'아직 정리한 경험이 없어요. 위에서 소재를 추천받거나 ‘경험 추가’를 눌러 보세요.'}</div>`}`;
+}
+
+function cnt(t){let b=0;for(const ch of t)b+=ch.charCodeAt(0)>127?2:1;return{all:t.length,noSp:t.replace(/\s/g,'').length,bytes:b}}
+function pEssays(){
+  const sorted=[...S.essays].sort((a,b)=>(a.company||'힣').localeCompare(b.company||'힣')||(a.created||0)-(b.created||0));
+  if(!S.essays.find(x=>x.id===essayId))essayId=[...S.essays].sort((a,b)=>(b.updated||0)-(a.updated||0))[0]?.id||null;
+  const e=S.essays.find(x=>x.id===essayId);
+  const groups={};sorted.forEach(x=>{const g=x.company||'회사 미정';(groups[g]=groups[g]||[]).push(x)});
+  const ea=EA.forId===essayId?EA:null;
+  return `${ph('자소서','글자 수를 보면서 쓰고, 문항에 맞는 경험과 AI 피드백을 받아요. 쓰는 즉시 저장돼요.',`<button class="btn" data-new-essay>${ico('plus')}새 문항</button>`)}
+  <div class="ess">
+    <div class="elist">${sorted.length?Object.entries(groups).map(([g,xs])=>`<div class="egrp">${esc(g)}</div>${xs.map((x,i)=>`<button class="eitem" aria-current="${x.id===essayId}" data-essay="${x.id}"><span>${i+1}. ${esc(x.question||'문항 없음')}</span><small class="num">${cnt(x.body||'').all.toLocaleString()}${x.limit?' / '+Number(x.limit).toLocaleString():''}자</small></button>`).join('')}`).join('')
+      :`<div class="empty">‘새 문항’을 누르거나 공고 찾기에서 공고를 등록하면 문항이 생겨요.</div>`}</div>
+    <div class="card" style="display:flex;flex-direction:column;gap:14px">
+      ${e?`<div class="g2">
+        <div class="field"><label for="e_company">회사</label><input class="in" id="e_company" list="companies" value="${esc(e.company)}"></div>
+        <div class="field"><label for="e_limit">글자 수 제한 (공백 포함)</label><input class="in num" id="e_limit" type="number" min="0" inputmode="numeric" value="${e.limit?esc(e.limit):''}"></div></div>
+      <datalist id="companies">${[...new Set(S.apps.map(a=>a.company))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+      <div class="field"><label for="e_q">문항</label><textarea class="in" id="e_q" rows="2" placeholder="예: 지원 동기와 입사 후 포부를 작성해 주세요.">${esc(e.question)}</textarea></div>
+      <div class="field"><label for="e_body">답변</label><textarea class="in" id="e_body" placeholder="여기에 쓰면 자동으로 저장돼요.">${esc(e.body)}</textarea></div>
+      <div class="counter" id="counter"></div>
+      <div class="row"><span class="faint small" id="saved"></span><span class="sp"></span><button class="btn sec sm" data-copy-essay>복사</button><button class="btn del sm" data-del-essay>삭제</button></div>`
+      :`<div class="empty">왼쪽에서 문항을 고르거나 새 문항을 만들어 주세요.</div>`}
+    </div>
+    <div class="card ref" style="display:flex;flex-direction:column;gap:10px">
+      <div class="card-h" style="margin:0"><h2>도우미</h2></div>
+      ${e?`<div class="row"><button class="btn ai-btn sm" data-matchexp ${!S.stories.length||(ea&&ea.busy)||!aiReady()?'disabled':''}>맞는 경험 추천</button><button class="btn sec sm" data-feedback ${(ea&&ea.busy)||!aiReady()?'disabled':''}>AI 피드백</button></div>`:''}
+      ${aiNote()}${ea&&ea.err?`<p class="err">${esc(ea.err)}</p>`:''}${ea&&ea.busy?thinking(ea.mode==='fb'?'답변을 읽는 중…':'경험을 고르는 중…'):''}
+      ${ea&&ea.list&&ea.mode==='match'?`<div class="aibox">${ea.list.map((m,i)=>{const s=S.stories.find(x=>x.id===m.id);return s?`<div><h4>${i+1}. ${esc(s.title)}</h4><p>${esc(m.why)}</p>${m.use?`<p class="muted">활용: ${esc(m.use)}</p>`:''}</div>`:''}).join('')}</div>`:''}
+      ${ea&&ea.fb&&ea.mode==='fb'?`<div class="aibox">
+        ${ea.fb.summary?`<div><h4>총평</h4><p>${esc(ea.fb.summary)}</p></div>`:''}
+        ${arr(ea.fb.good).length?`<div><h4>좋은 점</h4><ul>${arr(ea.fb.good).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+        ${arr(ea.fb.fix).length?`<div><h4>고칠 점</h4><ul>${arr(ea.fb.fix).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+        ${ea.fb.opening?`<div><h4>첫 문장 제안</h4><p>“${esc(ea.fb.opening)}”</p></div>`:''}</div>`:''}
+      <div style="margin-top:4px">${S.stories.length?S.stories.map(s=>`<details><summary>${esc(s.title)}</summary><p>${['s','t','a','r'].filter(k=>s[k]).map(k=>`<b>${k.toUpperCase()}</b> ${esc(s[k])}`).join('\n')||'<span class="faint">STAR 내용이 비어 있어요.</span>'}</p></details>`).join(''):'<p class="note">경험 은행에 넣은 경험이 여기 보여요.</p>'}</div>
+    </div>
+  </div>`;
+}
+
+function pSpecs(){
+  const by=SPECK.map(k=>({k,items:S.specs.filter(s=>(s.kind||'어학')===k)})).filter(g=>g.items.length);
+  return `${ph('스펙 관리','어학 점수, 자격증, 교육 이력을 모아 두고 시험일·만료일을 챙겨요.',`<button class="btn" data-new-spec>${ico('plus')}스펙 추가</button>`)}
+  ${by.length?by.map(g=>`<div class="card" style="padding:0;overflow:hidden"><div class="card-h" style="padding:14px 18px 0;margin-bottom:6px"><h2>${g.k}</h2><span class="faint small num">${g.items.length}</span></div>
+    <div>${g.items.map(s=>{const ex=okDate(s.expiry)?dday(s.expiry):null;const xd=okDate(s.examDate)?dday(s.examDate):null;return `<div class="spec" data-edit-spec="${s.id}" role="button" tabindex="0">
+      <div><strong>${esc(s.name)}</strong>${s.memo?`<div class="faint small">${esc(s.memo)}</div>`:''}</div>
+      <div class="num">${esc(s.score||'—')}</div>
+      <div class="faint small num hide-m">${okDate(s.date)?s.date.replace(/-/g,'.'):''}</div>
+      <div class="small">${xd!==null&&xd>=0?`<span class="dd warm">시험 ${ddLabel(xd)}</span>`:ex!==null?`<span class="dd ${ex<0?'hot':ex<=90?'warm':''}">${ex<0?'만료됨':'만료 '+ddLabel(ex)}</span>`:'<span class="faint">만료 없음</span>'}</div>
+    </div>`}).join('')}</div></div>`).join('')
+  :`<div class="empty">아직 등록한 스펙이 없어요. 토익·오픽 점수와 만료일을 넣어 두면 만료 전에 알려 줘요.</div>`}`;
+}
+
+const fmtT=s=>`${Math.floor(s/60)}:${pad(s%60)}`;
+function pQs(){
+  return `${ph('면접 연습','질문별로 답변 키워드를 정리하고 타이머로 소리 내어 연습해요.',`<button class="btn sec" data-basicqs>기본 질문 넣기</button><button class="btn" data-new-q>${ico('plus')}질문 추가</button>`)}
+  <div class="card timer"><span class="t num" id="tdisp">${fmtT(tLeft)}</span>
+    <button class="btn sm" data-timer>${tRun?'멈춤':'시작'}</button><button class="btn sec sm" data-treset>다시</button>
+    <select class="in" id="tsel" style="width:auto" aria-label="타이머 시간">${[30,60,90,120].map(s=>`<option value="${s}" ${s===tSec?'selected':''}>${s}초</option>`).join('')}</select>
+    <span class="note">1분 자기소개는 60초, 직무 질문은 90초 안에 답해 보세요.</span></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="card-h" style="margin:0"><h2>회사별 예상 질문</h2></div>
+    <div class="row"><select class="in" id="qa_app" style="flex:1;min-width:200px;width:auto" aria-label="회사 선택"><option value="">회사 선택</option>${S.apps.map(a=>`<option value="${a.id}" ${a.id===QA.appId?'selected':''}>${esc(a.company)} · ${esc(a.role||'직무 미정')}</option>`).join('')}</select>
+      <button class="btn ai-btn" data-genqs ${!QA.appId||QA.busy||!aiReady()?'disabled':''}>예상 질문 만들기</button></div>
+    ${aiNote()}${QA.err?`<p class="err">${esc(QA.err)}</p>`:''}${QA.busy?thinking('질문을 만드는 중…'):''}
+    ${QA.list?`<div class="list">${QA.list.map((x,i)=>`<div class="todo"><span><b style="font-weight:500">${esc(x.q)}</b><br><span class="faint small">${esc(x.intent||'')}</span></span><button class="btn sec sm" data-takeq="${i}" ${x._taken?'disabled':''}>${x._taken?'✓ 담음':'담기'}</button></div>`).join('')}</div>`:''}
+  </div>
+  ${QCAT.map(cat=>{const items=S.qs.filter(q=>(q.category||'공통')===cat);if(!items.length)return '';return `<h2 style="font-size:1.05rem">${cat} 질문 <span class="faint num" style="font-weight:500">${items.length}</span></h2>
+    <div class="qgrid">${items.map(q=>`<div class="q"><p><strong>${esc(q.q)}</strong></p>${q.company?`<span class="tag" style="align-self:flex-start">${esc(q.company)}</span>`:''}
+      <div class="ans">${q.answer?esc(q.answer):'<span class="faint">답변 메모가 아직 없어요.</span>'}</div>
+      <div class="row"><span class="faint small num">연습 ${q.practiced||0}회</span><span class="sp"></span><button class="btn sec sm" data-practice="${q.id}">연습함 +1</button><button class="btn sec sm" data-edit-q="${q.id}">답변 쓰기</button></div></div>`).join('')}</div>`}).join('')}
+  ${!S.qs.length?`<div class="empty">아직 질문이 없어요. ‘기본 질문 넣기’로 자주 나오는 질문을 불러올 수 있어요.</div>`:''}`;
+}
+
+function pSettings(){
+  const fs=document.documentElement.dataset.fs||'m';const total=COLS.reduce((n,c)=>n+S[c].length,0);
+  return `${ph('설정·백업','보기 설정과 데이터 저장 방식이에요.')}
+  <div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="card-h" style="margin:0"><h2>글자 크기</h2></div>
+    <div class="seg" role="group" aria-label="글자 크기" style="align-self:flex-start">${[['s','작게'],['m','보통'],['l','크게']].map(([k,l])=>`<button data-fs="${k}" aria-pressed="${fs===k}">${l}</button>`).join('')}</div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="card-h" style="margin:0"><h2>저장 방식</h2></div>
+    <p style="margin:0"><b>${storeLabel()}</b> <span class="faint small num">· 항목 ${total}개</span></p>
+    <p class="note">${Store.mode==='server'?'내 기록은 나만 볼 수 있어요. 같은 링크로 들어온 친구도 각자 자기 기록만 보고 써요.':'공유받은 링크로 열었거나 저장 권한이 없을 때는 이 기기 브라우저에 저장돼요. 브라우저 기록을 지우면 사라질 수 있으니 백업을 받아 두세요.'}</p></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="card-h" style="margin:0"><h2>백업</h2></div>
+    <div class="row"><button class="btn sec" data-export ${total?'':'disabled'}>백업 파일 받기 (.json)</button>
+      <label class="btn sec" style="cursor:pointer">백업 불러오기<input type="file" id="importf" accept=".json,application/json" hidden></label></div>
+    <p class="note">불러온 기록은 지금 기록에 더해져요. 같은 파일을 두 번 불러오면 중복될 수 있어요.</p>
+    <div id="exportbox"></div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="card-h" style="margin:0"><h2>친구와 함께 쓰기</h2></div>
+    <p class="small" style="margin:0">이 앱 주소를 친구에게 보내면 돼요. 기록은 각자 자기 휴대폰에만 저장되고 서로 보이지 않아요.</p></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="card-h" style="margin:0"><h2>모든 기록 지우기</h2></div>
+    <p class="note">지원 현황, 경험, 자소서, 스펙, 질문, 할 일, 일정이 모두 지워지고 되돌릴 수 없어요.</p>
+    <button class="btn del" style="align-self:flex-start" data-wipe ${total?'':'disabled'}>모두 지우기</button></div>`;
+}
+
+/* ---------- render ---------- */
+let lastPage=null;
+function render(force){
+  renderShell();
+  const ae=document.activeElement;const v=document.getElementById('view');
+  if(!force&&lastPage===page&&ae&&v.contains(ae)&&(ae.tagName==='TEXTAREA'||(ae.tagName==='INPUT'&&!['checkbox','radio','file'].includes(ae.type))))return;
+  lastPage=page;
+  v.innerHTML=({home:pHome,cal:pCal,find:pFind,apps:pApps,stories:pStories,essays:pEssays,specs:pSpecs,qs:pQs,settings:pSettings}[page])();
+  if(page==='essays')bindEssay();
+  if(page==='find'&&!FEED.list&&!FEED.loading)loadFeed();
+}
+
+let eTimer=null;
+function bindEssay(){
+  const e=S.essays.find(x=>x.id===essayId);if(!e)return;
+  const $=id=>document.getElementById(id);
+  const upd=()=>{
+    const c=cnt($('e_body').value),lim=Number($('e_limit').value)||0,pct=lim?Math.min(100,c.all/lim*100):0;
+    const over=lim&&c.all>lim;const col=over?'var(--due)':pct>=90?'var(--ok)':'var(--accent)';
+    $('counter').innerHTML=`<span>공백 포함 <b class="num">${c.all.toLocaleString()}</b>${lim?` / <span class="num">${lim.toLocaleString()}</span>`:''}</span><span>공백 제외 <b class="num">${c.noSp.toLocaleString()}</b></span><span>바이트 <b class="num">${c.bytes.toLocaleString()}</b></span>${lim?`<span style="color:${col};font-weight:700">${over?`${(c.all-lim).toLocaleString()}자 초과`:`${(lim-c.all).toLocaleString()}자 남음`}</span><div class="bar"><div style="width:${pct}%;background:${col}"></div></div>`:''}`;
+  };
+  const queue=()=>{upd();$('saved').textContent='작성 중…';clearTimeout(eTimer);const id=essayId;eTimer=setTimeout(async()=>{
+    if(id!==essayId||!$('e_body'))return;const cur=S.essays.find(x=>x.id===id)||{};
+    await Store.save('essays',{...cur,id,company:$('e_company').value,question:$('e_q').value,body:$('e_body').value,limit:Number($('e_limit').value)||0});
+    if($('saved'))$('saved').textContent=Store.mode==='memory'?'미리보기라 저장되지 않아요':'저장됨';
+  },800)};
+  ['e_body','e_q','e_company','e_limit'].forEach(id=>$(id).addEventListener('input',queue));
+  upd();
+}
+
+/* ---------- modals ---------- */
+function modal(title,body,onSave,onDelete,onMount){
+  const root=document.getElementById('modal-root');
+  root.innerHTML=`<div class="ov" id="ov"><form class="modal" id="mform" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="mh"><h2>${esc(title)}</h2><span class="sp"></span><button type="button" class="xbtn" id="mx" aria-label="닫기">×</button></div><div class="mb">${body}</div>
+   <div class="mf">${onDelete?`<button type="button" class="btn del" id="mdel">삭제</button>`:''}<span class="sp"></span><button type="button" class="btn sec" id="mcancel">취소</button><button class="btn" type="submit">저장</button></div></form></div>`;
+  const close=()=>{root.innerHTML='';render(true)};
+  ['mcancel','mx'].forEach(id=>document.getElementById(id).onclick=close);
+  document.getElementById('ov').addEventListener('mousedown',e=>{if(e.target.id==='ov')close()});
+  document.getElementById('mform').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await onSave(fd);close();toast('저장했어요')});
+  if(onDelete){const d=document.getElementById('mdel');d.onclick=async()=>{if(d.dataset.sure){await onDelete();close();toast('삭제했어요')}else{d.dataset.sure=1;d.textContent='한 번 더 누르면 삭제'}}}
+  onMount&&onMount(root);
+  if(matchMedia('(min-width:901px)').matches){const f=root.querySelector('.mb input:not([type=checkbox]),.mb textarea');f&&f.focus()}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('ov')){document.getElementById('modal-root').innerHTML='';render(true)}document.getElementById('sheet-root').innerHTML=''}});
+const fld=(id,label,inner)=>`<div class="field"><label for="${id}">${label}</label>${inner}</div>`;
+const inp=(id,name,val,attrs='')=>`<input class="in" id="${id}" name="${name}" value="${esc(val)}" ${attrs}>`;
+const ta=(id,name,val,rows,attrs='')=>`<textarea class="in" id="${id}" name="${name}" rows="${rows}" ${attrs}>${esc(val)}</textarea>`;
+
+function appModal(x){
+  x=x||{status:'관심'};const ch=x.check||{};
+  const linked=S.essays.filter(e=>e.company&&e.company===x.company).length;
+  modal(x.id?x.company:'지원 추가',`
+    <h3>기본 정보</h3>
+    <div class="g2">${fld('a_co','회사',inp('a_co','company',x.company,'required'))}${fld('a_role','직무',inp('a_role','role',x.role,'placeholder="예: SCM, 구매"'))}</div>
+    <div class="g2">${fld('a_st','단계',`<select class="in" id="a_st" name="status">${SK.map(k=>`<option ${k===(x.status||'관심')?'selected':''}>${k}</option>`).join('')}</select>`)}${fld('a_loc','근무지',inp('a_loc','location',x.location,'placeholder="예: 서울"'))}</div>
+    ${fld('a_link','공고 링크',inp('a_link','link',x.link,'placeholder="https://" inputmode="url"'))}
+    ${x.link?`<a class="small" href="${esc(x.link)}" target="_blank" rel="noopener">공고 열기 ↗</a>`:''}
+    <h3>일정</h3>
+    <div class="g3">${fld('a_sd','접수 시작',inp('a_sd','startDate',x.startDate,'type="date"'))}${fld('a_dl','서류 마감',inp('a_dl','deadline',x.deadline,'type="date"'))}${fld('a_ad','지원한 날',inp('a_ad','appliedDate',x.appliedDate,'type="date"'))}</div>
+    <div class="g3">${fld('a_td','필기·인적성',inp('a_td','testDate',x.testDate,'type="date"'))}${fld('a_id','면접',inp('a_id','interviewDate',x.interviewDate,'type="date"'))}${fld('a_rd','결과 발표',inp('a_rd','resultDate',x.resultDate,'type="date"'))}</div>
+    <p class="note">단계를 ‘지원완료’ 이후로 바꾸면 지원한 날이 오늘로 자동 기록돼요.</p>
+    <h3>제출 서류</h3>
+    <div class="checks">${DOCS.map(([k,l])=>`<label><input type="checkbox" name="chk_${k}" ${ch[k]?'checked':''}>${l}</label>`).join('')}</div>
+    <p class="note">이 회사 자소서 문항 ${linked}개${x.id?` · <button type="button" class="btn txt sm" id="a_newess">문항 추가하기</button>`:''}</p>
+    <h3>기업 분석</h3>
+    ${fld('a_tal','인재상·핵심가치',ta('a_tal','talent',x.talent,2))}
+    ${fld('a_biz','주요 사업·최근 이슈',ta('a_biz','business',x.business,3))}
+    ${fld('a_mot','지원 동기 포인트',ta('a_mot','motive',x.motive,2))}
+    <div class="field"><span class="lbl">자료 찾기 바로가기</span><div class="row" id="a_links">${researchLinks(x.company)}</div></div>
+    <div class="field"><span class="lbl">최근 뉴스</span><div id="a_news">${newsHtml(x.company)}</div></div>
+    <div class="row"><button type="button" class="btn sec sm" id="a_tpl">분석 틀 채우기</button><button type="button" class="btn sec sm" id="a_extbtn">인재상 키워드 뽑기</button></div>
+    <div id="a_ext" hidden class="field"><label for="a_exttext">회사 인재상·핵심가치 페이지 글을 붙여넣으세요</label><textarea class="in" id="a_exttext" rows="4" placeholder="채용 홈페이지의 '인재상' 부분을 복사해 붙여넣기"></textarea><button type="button" class="btn sm" id="a_extgo" style="align-self:flex-start">키워드 뽑기</button></div>
+    <div id="a_out"></div>
+    <h3>메모</h3>
+    ${ta('a_memo','memo',x.memo,4,'aria-label="메모" placeholder="전형 후기, 준비할 것, 결과 등"')}`,
+    fd=>{
+      const check={};DOCS.forEach(([k])=>check[k]=!!fd['chk_'+k]);
+      const d={...x,company:fd.company.trim(),role:fd.role.trim(),status:fd.status,location:fd.location,link:fd.link.trim(),startDate:fd.startDate,deadline:fd.deadline,appliedDate:fd.appliedDate,testDate:fd.testDate,interviewDate:fd.interviewDate,resultDate:fd.resultDate,check,talent:fd.talent,business:fd.business,motive:fd.motive,memo:fd.memo};
+      if(APPLIED.includes(d.status)&&!d.appliedDate)d.appliedDate=todayStr();
+      if(!d.created)d.created=Date.now();
+      return Store.save('apps',d);
+    }, x.id?()=>Store.del('apps',x.id):null,
+    root=>{
+      const ne=root.querySelector('#a_newess');if(ne)ne.onclick=async()=>{const id=await Store.save('essays',{company:x.company,question:'',body:'',limit:0,created:Date.now()});if(id){essayId=id;root.innerHTML='';go('essays')}};
+      const out=root.querySelector('#a_out'),coIn=root.querySelector('#a_co');
+      coIn.addEventListener('input',()=>{root.querySelector('#a_links').innerHTML=researchLinks(coIn.value);root.querySelector('#a_news').innerHTML=newsHtml(coIn.value)});
+      root.querySelector('#a_news').addEventListener('click',e=>{if(!e.target.closest('#a_newsadd'))return;const n=newsFor(coIn.value);if(!n)return;const el=root.querySelector('#a_biz');const lines=n.items.slice(0,4).map(i=>`• ${md(i.date)} ${i.title} (${i.source})`).join('\n');el.value=(el.value.trim()?el.value.trim()+'\n':'')+'최근 이슈\n'+lines;toast('사업·이슈 칸에 넣었어요. 저장을 눌러 주세요')});
+      if(!NEWS.data)loadNews().then(()=>{const b=root.querySelector('#a_news');if(b)b.innerHTML=newsHtml(coIn.value)});
+      root.querySelector('#a_tpl').onclick=()=>{
+        const f=(id,v)=>{const el=root.querySelector(id);if(!el.value.trim())el.value=v};
+        f('#a_tal','• 인재상 키워드: \n• 핵심가치: \n• 내 경험과 연결: ');
+        f('#a_biz','• 주요 사업·매출 구성: \n• 최근 1년 이슈(뉴스): \n• 경쟁사·업계 동향: \n• 이 직무가 하는 일: ');
+        f('#a_mot','• 왜 이 회사인가: \n• 왜 이 직무인가: \n• 입사 후 기여할 점: ');
+        toast('빈 칸에 분석 틀을 넣었어요');
+      };
+      root.querySelector('#a_extbtn').onclick=()=>{const box=root.querySelector('#a_ext');box.hidden=!box.hidden;if(!box.hidden)root.querySelector('#a_exttext').focus()};
+      root.querySelector('#a_extgo').onclick=()=>{
+        const txt=root.querySelector('#a_exttext').value;
+        if(txt.trim().length<10){out.innerHTML='<p class="err">인재상 글을 조금 더 붙여넣어 주세요.</p>';return}
+        const found=extractValues(txt);
+        if(!found.length){out.innerHTML='<p class="err">알려진 인재상 키워드를 찾지 못했어요. 핵심 단어를 직접 적어 주세요.</p>';return}
+        const tags=[...new Set(found.flatMap(f=>f.tags))];
+        const stories=S.stories.filter(s=>arr(s.tags).some(t=>tags.includes(t))).slice(0,4);
+        out.innerHTML=`<div class="aibox"><div><h4>찾은 인재상 키워드</h4><div class="tags" style="margin-top:6px">${found.map(f=>`<span class="tag">${esc(f.k)}${f.n>1?' ×'+f.n:''}</span>`).join('')}</div></div>
+          ${stories.length?`<div><h4>연결해 쓸 만한 내 경험</h4><ul>${stories.map(s=>`<li>${esc(s.title)} <span class="faint">(${arr(s.tags).filter(t=>tags.includes(t)).map(esc).join(', ')})</span></li>`).join('')}</ul></div>`:'<p class="faint">경험 은행에 역량 태그를 달아 두면 여기서 맞는 경험을 골라 줘요.</p>'}
+          <button type="button" class="btn sec sm" id="a_extapply" style="align-self:flex-start">인재상 칸에 넣기</button></div>`;
+        out.querySelector('#a_extapply').onclick=()=>{const el=root.querySelector('#a_tal');const line='인재상 키워드: '+found.map(f=>f.k).join(', ')+(stories.length?'\n연결할 경험: '+stories.map(s=>s.title).join(', '):'');el.value=el.value.trim()?el.value.trim()+'\n'+line:line;toast('인재상 칸에 넣었어요. 저장을 눌러 주세요')};
+      };
+    });
+}
+
+const NEWS={data:null,loading:null};
+function loadNews(){
+  if(NEWS.loading)return NEWS.loading;
+  if(!NEWS.data){const c=lsGet('jn_news',null);if(c)NEWS.data=c}
+  NEWS.loading=(async()=>{for(const u of ['news.json?t='+Date.now(),'https://raw.githubusercontent.com/nakyoung-naya/dfddf/main/news.json']){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const j=await r.json();NEWS.data=j;lsSet('jn_news',j);break}catch(e){}}NEWS.loading=null})();
+  return NEWS.loading;
+}
+const cleanCo=n=>(n||'').replace(/\(주\)|㈜|주식회사|\s+/g,'').trim();
+function newsFor(co){const c=NEWS.data&&NEWS.data.companies;const k=cleanCo(co);if(!c||!k)return null;if(c[k])return c[k];const hit=Object.keys(c).find(n=>n.includes(k)||k.includes(n));return hit?c[hit]:null}
+function newsHtml(co){
+  if(!(co||'').trim())return '<span class="note">회사 이름을 적으면 최근 뉴스를 보여 줘요.</span>';
+  if(!NEWS.data)return '<span class="note">뉴스를 불러오는 중이에요…</span>';
+  const n=newsFor(co);
+  if(!n)return `<span class="note">모아 둔 뉴스가 없어요. 위 ‘최신 뉴스’ 바로가기로 찾아보세요. 계속 받아 보려면 GitHub의 companies.txt에 회사 이름을 적어 두세요.</span>`;
+  return `<div class="list">${n.items.map(i=>`<a class="li" href="${esc(i.url)}" target="_blank" rel="noopener" style="grid-template-columns:52px minmax(0,1fr);text-decoration:none;color:inherit"><span class="date num">${md(i.date)}</span><span><strong style="white-space:normal">${esc(i.title)}</strong><small>${esc(i.source)}</small></span></a>`).join('')}</div>
+  <button type="button" class="btn sec sm" id="a_newsadd" style="margin-top:8px">이 뉴스 제목을 사업·이슈 칸에 넣기</button>`;
+}
+const VALUE_DICT=[
+ ['도전',['도전','개척','과감'],['도전·성장']],['열정',['열정','몰입','패기'],['도전·성장']],['성장',['성장','자기계발','학습','배움'],['도전·성장']],
+ ['창의',['창의','창조','아이디어'],['문제해결']],['혁신',['혁신','변화','개선'],['문제해결']],['실행력',['실행','추진력','행동'],['문제해결']],
+ ['전문성',['전문성','전문가','프로','역량'],['직무전문성']],['책임감',['책임','주인의식','오너십','주도'],['리더십']],['리더십',['리더십','리더'],['리더십']],
+ ['소통',['소통','커뮤니케이션','경청'],['협업']],['협업',['협업','협력','팀워크','함께','시너지'],['협업']],['존중',['존중','배려'],['협업']],
+ ['고객 중심',['고객','소비자'],['고객응대']],['신뢰',['신뢰','정직','윤리','정도','투명'],['꼼꼼함']],['원칙',['원칙','기본','규정'],['꼼꼼함']],
+ ['글로벌',['글로벌','세계','해외','국제'],['글로벌']],['데이터·디지털',['데이터','디지털','AI','분석'],['데이터분석','AI·디지털']],['끈기',['끈기','인내','집념'],['도전·성장']],
+ ['상생·사회공헌',['상생','사회','ESG','지속가능'],[]],['안전',['안전'],['꼼꼼함']]
+];
+function extractValues(txt){const t=txt.replace(/\s+/g,' ');return VALUE_DICT.map(([k,words,tags])=>({k,tags,n:words.reduce((s,w)=>s+(t.split(w).length-1),0)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n)}
+function researchLinks(co){
+  co=(co||'').trim();if(!co)return '<span class="note">회사 이름을 적으면 바로가기가 생겨요.</span>';
+  const q=encodeURIComponent;
+  const L=[['인재상·핵심가치',`https://www.google.com/search?q=${q(co+' 인재상 핵심가치')}`],['채용 홈페이지',`https://www.google.com/search?q=${q(co+' 채용 홈페이지')}`],
+    ['최신 뉴스',`https://search.naver.com/search.naver?where=news&sort=1&query=${q(co)}`],['사업보고서(DART)',`https://www.google.com/search?q=${q(co+' 사업보고서 dart.fss.or.kr')}`],
+    ['기업 리뷰(잡플래닛)',`https://www.jobplanet.co.kr/search?query=${q(co)}`],['합격 자소서·후기',`https://www.google.com/search?q=${q(co+' 합격 자소서 면접 후기')}`]];
+  return L.map(([l,u])=>`<a class="btn sec sm" href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join('');
+}
+function storyModal(x){
+  x=x||{tags:[]};
+  modal(x.id?'경험 수정':'경험 추가',`
+    ${fld('s_title','경험 이름',inp('s_title','title',x.title,'required placeholder="예: 물류센터 동선 개선 프로젝트"'))}
+    <div class="g2">${fld('s_o','소속·장소',inp('s_o','org',x.org))}${fld('s_p','기간',inp('s_p','period',x.period,'placeholder="2025.03–2025.12"'))}</div>
+    ${[['s','S · 상황','어떤 상황이었나요?'],['t','T · 과제','내가 맡은 목표나 문제는?'],['a','A · 행동','구체적으로 무엇을 했나요?'],['r','R · 결과','숫자로 말할 수 있는 결과와 배운 점']].map(([k,l,p])=>fld('s_'+k,l,ta('s_'+k,k,x[k],3,`placeholder="${p}"`))).join('')}
+    <div class="field"><span class="lbl">역량 태그</span><div class="checks">${TAGS.map(t=>`<label><input type="checkbox" name="tag_${t}" ${arr(x.tags).includes(t)?'checked':''}>${t}</label>`).join('')}</div></div>
+    ${fld('s_m','소재 메모',ta('s_m','memo',x.memo,2,'placeholder="이 경험으로 어필할 포인트"'))}
+    <div class="row"><button type="button" class="btn ai-btn sm" id="s_ai" ${aiReady()?'':'disabled'}>이 경험 소재 추천받기</button>${aiReady()?'':'<span class="note">게시된 앱에서 Claude 사용을 허용하면 쓸 수 있어요.</span>'}</div>
+    <div id="s_out"></div>`,
+    fd=>Store.save('stories',{...x,title:fd.title.trim(),org:fd.org,period:fd.period,s:fd.s,t:fd.t,a:fd.a,r:fd.r,memo:fd.memo,tags:TAGS.filter(t=>fd['tag_'+t]),created:x.created||Date.now()}),
+    x.id?()=>Store.del('stories',x.id):null,
+    root=>{
+      const b=root.querySelector('#s_ai'),out=root.querySelector('#s_out'),v=id=>root.querySelector('#'+id).value.trim();
+      b.onclick=async()=>{
+        if(!v('s_title')&&!v('s_s')&&!v('s_a')){out.innerHTML='<p class="err">경험 이름이나 내용을 조금이라도 적어 주세요.</p>';return}
+        b.disabled=true;out.innerHTML=thinking('소재를 살펴보는 중…');
+        try{
+          const r=await askJSON(`너는 한국 신입 공채 자기소개서 코치야. 지원자의 경험 하나를 보고 자소서 소재로 어떻게 쓸지 조언해 줘. 지원자가 쓰지 않은 사실은 지어내지 말고, 모르는 건 질문으로 물어봐.
+경험: ${v('s_title')} / ${v('s_o')} ${v('s_p')}
+S: ${v('s_s')}
+T: ${v('s_t')}
+A: ${v('s_a')}
+R: ${v('s_r')}
+관심 직무: ${F.kw.join(', ')||'(없음)'}
+JSON 객체 하나로만 답해: {"tags":["다음 중에서만 1~3개: ${TAGS.join(', ')}"],"fits":["어울리는 자소서 문항 유형 2~3개"],"angle":"어필할 핵심 포인트 1~2문장","hook":"자소서 첫 문장 예시","deepen":["STAR를 더 구체화할 질문 3개"],"numbers":"수치로 보여줄 결과 아이디어 1문장"}`);
+          const tags=arr(r.tags).filter(t=>TAGS.includes(t));
+          out.innerHTML=`<div class="aibox">${r.angle?`<div><h4>어필 포인트</h4><p>${esc(r.angle)}</p></div>`:''}${arr(r.fits).length?`<div><h4>어울리는 문항</h4><ul>${arr(r.fits).map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}${r.hook?`<div><h4>첫 문장 예시</h4><p>“${esc(r.hook)}”</p></div>`:''}${arr(r.deepen).length?`<div><h4>더 채우면 좋을 질문</h4><ul>${arr(r.deepen).map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}${r.numbers?`<div><h4>수치 포인트</h4><p>${esc(r.numbers)}</p></div>`:''}
+            <button type="button" class="btn sec sm" id="s_apply" style="align-self:flex-start">태그·포인트 적용${tags.length?' ('+tags.map(esc).join(', ')+')':''}</button></div>`;
+          out.querySelector('#s_apply').onclick=()=>{tags.forEach(t=>{const cb=root.querySelector(`input[name="tag_${t}"]`);if(cb)cb.checked=true});const m=root.querySelector('#s_m');if(r.angle&&!m.value.includes(r.angle))m.value=(m.value?m.value+'\n':'')+r.angle;toast('적용했어요. 저장을 눌러 주세요')};
+        }catch(e){const m=aiErr(e);out.innerHTML=m?`<p class="err">${esc(m)}</p>`:''}
+        b.disabled=!aiReady();
+      };
+    });
+}
+
+function specModal(x){
+  x=x||{kind:'어학'};
+  modal(x.id?'스펙 수정':'스펙 추가',`
+    <div class="g2">${fld('p_k','분류',`<select class="in" id="p_k" name="kind">${SPECK.map(k=>`<option ${k===(x.kind||'어학')?'selected':''}>${k}</option>`).join('')}</select>`)}${fld('p_n','이름',inp('p_n','name',x.name,'required placeholder="예: TOEIC, OPIc, 물류관리사"'))}</div>
+    <div class="g2">${fld('p_s','점수·등급',inp('p_s','score',x.score,'placeholder="예: 900, IH, 1급"'))}${fld('p_d','취득일',inp('p_d','date',x.date,'type="date"'))}</div>
+    <div class="g2">${fld('p_e','유효기간 만료일',inp('p_e','expiry',x.expiry,'type="date"'))}${fld('p_x','예정된 시험일',inp('p_x','examDate',x.examDate,'type="date"'))}</div>
+    <p class="note">토익·토스·오픽·텝스처럼 유효기간이 2년인 시험은 만료일을 비워 두면 취득일 기준으로 자동 계산돼요.</p>
+    ${fld('p_m','메모',inp('p_m','memo',x.memo,'placeholder="예: 성적표 PDF 준비됨"'))}`,
+    fd=>{const d={...x,...fd,name:fd.name.trim()};if(!d.expiry&&okDate(d.date)&&/toeic|토익|toss|토스|opic|오픽|teps|텝스/i.test(d.name)){const t=toD(d.date);t.setFullYear(t.getFullYear()+2);t.setDate(t.getDate()-1);d.expiry=iso(t)}return Store.save('specs',d)},
+    x.id?()=>Store.del('specs',x.id):null);
+}
+function qModal(x){
+  x=x||{category:'공통',practiced:0};
+  modal(x.id?'답변 정리':'질문 추가',`
+    ${fld('q_q','질문',ta('q_q','q',x.q,2,'required'))}
+    <div class="g2">${fld('q_c','분류',`<select class="in" id="q_c" name="category">${QCAT.map(c=>`<option ${c===(x.category||'공통')?'selected':''}>${c}</option>`).join('')}</select>`)}${fld('q_co','회사 (선택)',inp('q_co','company',x.company,'list="qcos"'))}</div>
+    <datalist id="qcos">${[...new Set(S.apps.map(a=>a.company))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    ${fld('q_a','답변 메모',ta('q_a','answer',x.answer,8,'placeholder="통째로 외우기보다 핵심 키워드와 근거 경험을 적어 두세요"'))}`,
+    fd=>Store.save('qs',{...x,...fd,practiced:x.practiced||0}), x.id?()=>Store.del('qs',x.id):null);
+}
+function eventModal(x,date){
+  x=x||{date:date||calSel};
+  modal(x.id?'일정 수정':'개인 일정 추가',`
+    ${fld('v_t','일정',inp('v_t','title',x.title,'required placeholder="예: 토익 시험, 취업 박람회, 스터디"'))}
+    ${fld('v_d','날짜',inp('v_d','date',x.date,'type="date" required'))}
+    ${fld('v_m','메모',inp('v_m','memo',x.memo,'placeholder="장소, 준비물 등"'))}`,
+    fd=>Store.save('events',{...x,...fd,title:fd.title.trim()}), x.id?()=>Store.del('events',x.id):null);
+}
+
+/* ---------- AI actions ---------- */
+async function recRoles(){
+  F.rolesBusy=true;F.rolesErr='';render(true);
+  try{const r=await askJSON(`너는 한국 대졸 신입 채용 코치야. 지원자에게 맞는 직무와 그 직무로 신입을 채용해 온 한국 기업을 추천해 줘.
+원하는 키워드: ${F.kw.join(', ')}
+조건: ${F.cond||'(없음)'}
+지원자의 경험:
+${storySummary()}
+이미 지원 기록에 있는 회사(중복 피하기): ${[...new Set(S.apps.map(a=>a.company))].join(', ')||'(없음)'}
+규칙: 직무 5개. 각 직무마다 실제로 존재하고 그 직무로 신입 공채를 해 온 한국 기업 5곳(조건 반영). 지금 공고가 열려 있는지는 모른다는 전제. 경험이 있으면 why에 연결해.
+JSON 배열로만 답해: [{"role":"직무명","why":"이 지원자에게 맞는 이유 1~2문장","skills":["필요 역량 3개"],"companies":["기업명 5개"],"search":"자소설닷컴 검색어 한두 단어"}]`,{cache:false});
+    F.roles=arr(r).filter(x=>x&&x.role).slice(0,6);if(!F.roles.length)F.rolesErr='추천을 만들지 못했어요. 키워드를 바꿔 보세요.'}
+  catch(e){F.rolesErr=aiErr(e)}
+  F.rolesBusy=false;render(true);
+}
+async function parsePosting(){
+  if(F.paste.trim().length<30){F.postErr='공고 내용을 붙여넣어 주세요.';render(true);return}
+  F.postBusy=true;F.postErr='';F.posts=null;render(true);
+  try{const r=await askJSON(`아래는 한국 채용 공고 페이지에서 복사한 텍스트야. 오늘은 ${todayStr()}.
+모집 직무가 여러 개면 직무마다 객체 하나. 날짜는 YYYY-MM-DD, 연도가 없으면 오늘과 가장 가까운 날짜로, 못 찾으면 빈 문자열. startDate는 서류 접수 시작일, deadline은 서류 마감일. 자소서 문항이 직무마다 다르면 그 직무 것만, 공통이면 모두에. 글자 수 제한이 없으면 limit 0. 텍스트에 없는 내용은 지어내지 마.
+JSON 배열로만 답해: [{"company":"","role":"","startDate":"","deadline":"","location":"","summary":"주요 업무 1~2문장","requirements":["자격요건·우대사항"],"questions":[{"q":"문항 전문","limit":0}]}]
+
+공고 텍스트:
+${F.paste.slice(0,14000)}`);
+    F.posts=(Array.isArray(r)?r:[r]).filter(p=>p&&(p.company||p.role)).slice(0,10);if(!F.posts.length)F.postErr='공고에서 회사나 직무를 찾지 못했어요.'}
+  catch(e){F.postErr=aiErr(e)}
+  F.postBusy=false;render(true);
+}
+async function addPost(i){
+  const p=F.posts[i];if(!p)return;const qs=arr(p.questions);
+  const memo=[p.summary,arr(p.requirements).length&&('자격요건·우대\n- '+arr(p.requirements).join('\n- '))].filter(Boolean).join('\n\n');
+  await Store.save('apps',{company:p.company||'회사명 확인',role:p.role||'',status:qs.length&&F.mkEssays?'작성중':'관심',startDate:okDate(p.startDate)?p.startDate:'',deadline:okDate(p.deadline)?p.deadline:'',location:p.location||'',link:F.url,memo,check:{},created:Date.now()});
+  if(F.mkEssays)for(const q of qs)await Store.save('essays',{company:p.company||'',question:q.q||'',body:'',limit:Number(q.limit)||0,created:Date.now()});
+  toast(`${p.company} 추가했어요${F.mkEssays&&qs.length?` · 자소서 문항 ${qs.length}개`:''}`);render(true);
+}
+async function discover(){
+  if(D.text.trim().length<4){D.err='해본 활동을 조금 적어 주세요.';render(true);return}
+  D.busy=true;D.err='';render(true);
+  try{const r=await askJSON(`너는 한국 신입 공채 자기소개서 코치야. 지원자가 적은 활동 목록에서 자소서 소재를 뽑아 줘. 한 활동에서 다른 각도의 소재가 여럿 나올 수 있어. 지원자가 적지 않은 사실은 지어내지 말고 필요한 건 ask에 질문으로.
+지원 직무: ${D.target||F.kw.join(', ')||'(미정)'}
+활동 목록:
+${D.text.slice(0,6000)}
+이미 정리한 경험(중복 피하기): ${S.stories.map(s=>s.title).join(', ')||'(없음)'}
+JSON 배열로 4~6개만 답해: [{"title":"소재 이름","org":"소속·장소(알면)","angle":"어필 포인트와 직무 연결 1~2문장","tags":["다음 중에서만 1~3개: ${TAGS.join(', ')}"],"ask":"STAR를 채우기 위해 떠올려야 할 질문 1개"}]`,{cache:false});
+    D.ideas=arr(r).filter(x=>x&&x.title).slice(0,8);if(!D.ideas.length)D.err='소재를 찾지 못했어요. 활동을 더 자세히 적어 보세요.'}
+  catch(e){D.err=aiErr(e)}
+  D.busy=false;render(true);
+}
+async function matchExp(){
+  const e=S.essays.find(x=>x.id===essayId);if(!e)return;
+  const q=document.getElementById('e_q')?.value||e.question||'',co=document.getElementById('e_company')?.value||e.company;
+  if(!q.trim()){toast('문항을 먼저 적어 주세요');return}
+  Object.assign(EA,{forId:essayId,mode:'match',busy:true,err:'',list:null});render(true);
+  const app=S.apps.find(a=>a.company===co);
+  try{const r=await askJSON(`자기소개서 문항에 쓸 경험을 지원자의 경험 목록에서 골라 줘.
+회사: ${co||'(미정)'} / 직무: ${app?.role||'(미정)'}
+문항: ${q}
+경험 목록:
+${S.stories.slice(0,30).map(s=>`[${s.id}] ${s.title} | 태그: ${arr(s.tags).join(',')} | ${[s.s,s.t,s.a,s.r,s.memo].filter(Boolean).join(' / ').slice(0,300)}`).join('\n')}
+가장 잘 맞는 경험 최대 3개. id는 대괄호 안 값 그대로.
+JSON 배열로만 답해: [{"id":"","why":"맞는 이유 1문장","use":"문항에서 어떤 흐름으로 쓸지 1문장"}]`);
+    EA.list=arr(r).filter(m=>S.stories.some(s=>s.id===m.id)).slice(0,3);if(!EA.list.length)EA.err='맞는 경험을 찾지 못했어요.'}
+  catch(err){EA.err=aiErr(err)}
+  EA.busy=false;render(true);
+}
+async function feedback(){
+  const e=S.essays.find(x=>x.id===essayId);if(!e)return;
+  const body=document.getElementById('e_body')?.value||e.body||'',q=document.getElementById('e_q')?.value||e.question,co=document.getElementById('e_company')?.value||e.company;
+  if(body.trim().length<80){toast('답변을 80자 이상 쓰면 피드백을 받을 수 있어요');return}
+  Object.assign(EA,{forId:essayId,mode:'fb',busy:true,err:'',fb:null});render(true);
+  const app=S.apps.find(a=>a.company===co);
+  try{EA.fb=await askJSON(`너는 한국 대기업 신입 공채 서류 평가 경험이 많은 자소서 코치야. 아래 답변을 평가해 줘. 문항 의도에 맞는지, 두괄식인지, 경험이 구체적이고 수치가 있는지, 회사·직무와 연결되는지, 상투적 표현이 없는지 봐. 칭찬보다 고칠 점을 구체적으로.
+회사: ${co||'(미정)'} / 직무: ${app?.role||'(미정)'} / 글자 수 제한: ${e.limit||'없음'}
+문항: ${q}
+답변:
+${body.slice(0,5000)}
+JSON 객체 하나로만 답해: {"summary":"총평 2문장","good":["좋은 점 2개"],"fix":["고칠 점 3~4개, 어느 문장을 어떻게 바꿀지 구체적으로"],"opening":"두괄식 첫 문장 제안 1개"}`,{cache:false})}
+  catch(err){EA.err=aiErr(err)}
+  EA.busy=false;render(true);
+}
+async function genQs(){
+  const a=S.apps.find(x=>x.id===QA.appId);if(!a)return;
+  QA.busy=true;QA.err='';QA.list=null;render(true);
+  try{const r=await askJSON(`한국 신입 공채 면접 코치로서 아래 지원에 대한 예상 면접 질문을 만들어 줘. 지원자의 경험을 파고드는 꼬리 질문도 섞어.
+회사: ${a.company} / 직무: ${a.role||'(미정)'}
+기업 분석 메모: ${[a.talent,a.business,a.motive].filter(Boolean).join(' / ').slice(0,800)||'(없음)'}
+지원자 경험:
+${storySummary(10)}
+JSON 배열로 8개만 답해: [{"q":"질문","category":"공통|직무|인성|회사별 중 하나","intent":"면접관이 확인하려는 것 1문장"}]`,{cache:false});
+    QA.list=arr(r).filter(x=>x&&x.q).slice(0,10);if(!QA.list.length)QA.err='질문을 만들지 못했어요.'}
+  catch(e){QA.err=aiErr(e)}
+  QA.busy=false;render(true);
+}
+
+/* ---------- backup ---------- */
+async function exportData(){
+  const o={app:'취업 수첩',version:2,exported:new Date().toISOString()};COLS.forEach(c=>o[c]=S[c].map(({id,...r})=>r));
+  const json=JSON.stringify(o,null,1);const name=`취업수첩_백업_${todayStr()}.json`;
+  if(dl){try{await dl.save({filename:name,data:json});toast('백업 파일을 저장했어요');return}catch(e){if(e&&e.code==='declined')return}}
+  try{const u=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('백업 파일을 저장했어요');return}catch(e){}
+  document.getElementById('exportbox').innerHTML=`<p class="note">파일 저장을 쓸 수 없어요. 아래 내용을 복사해 메모장에 붙여넣고 .json으로 저장하세요.</p><textarea class="in" rows="6" readonly id="exptext" aria-label="백업 내용">${esc(json)}</textarea>`;
+  const t=document.getElementById('exptext');t.focus();t.select();
+}
+async function importData(file){
+  try{
+    const o=JSON.parse(await file.text());let n=0;
+    for(const c of COLS)for(const r of arr(o[c])){if(r&&typeof r==='object'){const {id,...rest}=r;await Store.save(c,rest);n++}}
+    toast(`${n}개 항목을 불러왔어요`);render(true);
+  }catch(e){toast('백업 파일을 읽지 못했어요. 이 앱에서 받은 .json 파일인지 확인해 주세요.')}
+}
+
+/* ---------- events ---------- */
+function addKw(v){v=v.trim().replace(/,$/,'');if(!v||F.kw.includes(v)||F.kw.length>=8)return;F.kw.push(v);lsSet('jn_kw',F.kw)}
+function openRef(ref){const i=ref.indexOf(':');const c=ref.slice(0,i),id=ref.slice(i+1);const x=S[c]&&S[c].find(r=>r.id===id);if(!x)return;({apps:appModal,specs:specModal,events:eventModal})[c](x)}
+const view=document.getElementById('view');
+view.addEventListener('click',async e=>{
+  const t=e.target.closest('button,[data-edit-app],[data-edit-spec],a,select,label,input');
+  if(!t||['A','SELECT','LABEL','INPUT'].includes(t.tagName))return;
+  const d=t.dataset;
+  if(d.go)return;
+  if(d.feedmode){FEED.mode=d.feedmode;lsSet('jn_feedmode',FEED.mode);return render(true)}
+  if(d.feedcareer!==undefined){FEED.career=d.feedcareer;return render(true)}
+  if(d.feednew!==undefined){FEED.onlyNew=!FEED.onlyNew;return render(true)}
+  if(d.feedrefresh!==undefined)return loadFeed(true);
+  if(d.addfeed){const p=arr(FEED.list).find(x=>x.id===d.addfeed);if(!p)return;t.disabled=true;await Store.save('apps',{company:p.company||'회사명 확인',role:p.title||'',status:'관심',startDate:okDate(p.start)?p.start:'',deadline:okDate(p.end)?p.end:'',link:p.url,memo:[p.duties,p.endTime&&('마감 시각 '+p.endTime)].filter(Boolean).join('\n'),check:{},created:Date.now()});toast(`${p.company} 추가했어요`);return render(true)}
+  if(d.hidebanner!==undefined){lsSet('jn_hidebanner',true);return render(true)}
+  if(d.ref)return openRef(d.ref);
+  if(d.editApp)return appModal(S.apps.find(a=>a.id===d.editApp));
+  if(d.newApp!==undefined)return appModal();
+  if(d.newEvent!==undefined)return eventModal(null,d.newEvent||calSel);
+  if(d.deltodo)return Store.del('todos',d.deltodo);
+  if(d.cal!==undefined){const k=Number(d.cal);if(k===0){const n=new Date();calY=n.getFullYear();calM=n.getMonth();calSel=todayStr()}else{const n=new Date(calY,calM+k,1);calY=n.getFullYear();calM=n.getMonth()}return render(true)}
+  if(d.day){calSel=d.day;const dd=toD(d.day);if(dd.getMonth()!==calM){calY=dd.getFullYear();calM=dd.getMonth()}return render(true)}
+  if(d.appview){appView=d.appview;lsSet('jn_appview',appView);return render(true)}
+  if(d.appfilter){appFilter=d.appfilter;return render(true)}
+  if(d.kwadd){addKw(d.kwadd);return render(true)}
+  if(d.kwdel!==undefined){F.kw.splice(Number(d.kwdel),1);lsSet('jn_kw',F.kw);return render(true)}
+  if(d.recroles!==undefined){F.cond=document.getElementById('cond')?.value||F.cond;return recRoles()}
+  if(d.addco){if(d.added!==undefined)return;t.disabled=true;await Store.save('apps',{company:d.addco,role:d.role,status:'관심',check:{},memo:'공고 찾기 추천에서 추가',created:Date.now()});toast(`${d.addco} 추가했어요`);return render(true)}
+  if(d.copykw){try{await navigator.clipboard.writeText(d.copykw);toast('검색어를 복사했어요')}catch(err){toast('검색어: '+d.copykw)}return}
+  if(d.parse!==undefined){F.paste=document.getElementById('ptext').value;F.url=document.getElementById('purl').value.trim();return parsePosting()}
+  if(d.addpost!==undefined){t.disabled=true;return addPost(Number(d.addpost))}
+  if(d.discover!==undefined){D.text=document.getElementById('dtext').value;D.target=document.getElementById('dtarget').value;return discover()}
+  if(d.takeidea!==undefined){const x=D.ideas[Number(d.takeidea)];if(!x||x._taken)return;x._taken=true;await Store.save('stories',{title:x.title,org:x.org||'',period:'',s:'',t:'',a:'',r:'',memo:[x.angle,x.ask&&('채울 질문: '+x.ask)].filter(Boolean).join('\n'),tags:arr(x.tags).filter(z=>TAGS.includes(z)),created:Date.now()});toast('경험 은행에 담았어요');return render(true)}
+  if(d.tag!==undefined){tagFilter=d.tag||null;return render(true)}
+  if(d.editStory)return storyModal(S.stories.find(s=>s.id===d.editStory));
+  if(d.newStory!==undefined)return storyModal();
+  if(d.essay){essayId=d.essay;return render(true)}
+  if(d.newEssay!==undefined){const cur=S.essays.find(x=>x.id===essayId);const id=await Store.save('essays',{company:cur?.company||'',question:'',body:'',limit:0,created:Date.now()});if(id)essayId=id;return render(true)}
+  if(d.delEssay!==undefined){if(t.dataset.sure){clearTimeout(eTimer);await Store.del('essays',essayId);essayId=null;render(true)}else{t.dataset.sure=1;t.textContent='한 번 더 누르면 삭제'}return}
+  if(d.copyEssay!==undefined){const tx=document.getElementById('e_body');try{await navigator.clipboard.writeText(tx.value);toast('복사했어요')}catch(err){tx.focus();tx.select();toast('선택했어요. Ctrl+C로 복사하세요')}return}
+  if(d.matchexp!==undefined)return matchExp();
+  if(d.feedback!==undefined)return feedback();
+  if(d.newSpec!==undefined)return specModal();
+  if(d.editSpec)return specModal(S.specs.find(s=>s.id===d.editSpec));
+  if(d.newQ!==undefined)return qModal();
+  if(d.editQ)return qModal(S.qs.find(q=>q.id===d.editQ));
+  if(d.basicqs!==undefined){const have=new Set(S.qs.map(q=>q.q));let n=0;for(const [q,c] of BASIC_QS)if(!have.has(q)){await Store.save('qs',{q,category:c,answer:'',practiced:0,created:Date.now()});n++}toast(n?`기본 질문 ${n}개를 넣었어요`:'이미 모두 들어 있어요');return}
+  if(d.genqs!==undefined)return genQs();
+  if(d.takeq!==undefined){const x=QA.list[Number(d.takeq)];if(!x||x._taken)return;x._taken=true;const a=S.apps.find(z=>z.id===QA.appId);await Store.save('qs',{q:x.q,category:QCAT.includes(x.category)?x.category:'회사별',company:a?.company||'',answer:x.intent?('의도: '+x.intent):'',practiced:0,created:Date.now()});toast('질문을 담았어요');return render(true)}
+  if(d.practice){const q=S.qs.find(x=>x.id===d.practice);await Store.save('qs',{...q,practiced:(q.practiced||0)+1});return}
+  if(d.timer!==undefined){if(tRun){clearInterval(tRun);tRun=null}else{if(tLeft<=0)tLeft=tSec;tRun=setInterval(()=>{tLeft--;const el=document.getElementById('tdisp');if(el){el.textContent=fmtT(Math.max(0,tLeft));el.style.color=tLeft<=10?'var(--due)':''}if(tLeft<=0){clearInterval(tRun);tRun=null;toast('시간 끝!');render(true)}},1000)}return render(true)}
+  if(d.treset!==undefined){clearInterval(tRun);tRun=null;tLeft=tSec;return render(true)}
+  if(d.fs){if(d.fs==='m')delete document.documentElement.dataset.fs;else document.documentElement.dataset.fs=d.fs;lsSet('jn_fs',d.fs);return render(true)}
+  if(d.export!==undefined)return exportData();
+  if(d.wipe!==undefined){if(t.dataset.sure){for(const c of COLS)for(const x of [...S[c]])await Store.del(c,x.id);toast('모든 기록을 지웠어요');render(true)}else{t.dataset.sure=1;t.textContent='정말 지우려면 한 번 더 누르세요'}return}
+});
+view.addEventListener('submit',async e=>{if(e.target.id==='todo-form'){e.preventDefault();const i=document.getElementById('todo_in');const v=i.value.trim();if(!v)return;i.value='';await Store.save('todos',{text:v,done:false,created:Date.now()});render(true);document.getElementById('todo_in')?.focus()}});
+view.addEventListener('keydown',e=>{
+  if(e.target.id==='kwin'&&(e.key==='Enter'||e.key===',')&&!e.isComposing){e.preventDefault();addKw(e.target.value);render(true);document.getElementById('kwin')?.focus();return}
+  if(e.target.id==='kwin'&&e.key==='Backspace'&&!e.target.value&&F.kw.length){F.kw.pop();lsSet('jn_kw',F.kw);render(true);document.getElementById('kwin')?.focus();return}
+  if(e.key==='Enter'&&e.target.dataset){if(e.target.dataset.editApp)appModal(S.apps.find(a=>a.id===e.target.dataset.editApp));else if(e.target.dataset.editSpec)specModal(S.specs.find(a=>a.id===e.target.dataset.editSpec))}
+});
+let qT=null;
+view.addEventListener('input',e=>{const id=e.target.id,v=e.target.value;
+  if(id==='cond')F.cond=v;if(id==='ptext')F.paste=v;if(id==='purl')F.url=v;if(id==='dtext')D.text=v;if(id==='dtarget')D.target=v;
+  if(id==='appq'&&!e.isComposing){appQ=v;clearTimeout(qT);qT=setTimeout(()=>{const n0=document.getElementById('appq');const pos=n0?n0.selectionStart:v.length;render(true);const n=document.getElementById('appq');if(n){n.focus();n.setSelectionRange(pos,pos)}},250)}});
+view.addEventListener('compositionend',e=>{if(e.target.id==='appq')e.target.dispatchEvent(new Event('input',{bubbles:true}))});
+view.addEventListener('change',async e=>{const t=e.target;
+  if(t.dataset.todo){const x=S.todos.find(z=>z.id===t.dataset.todo);if(x)await Store.save('todos',{...x,done:t.checked});return}
+  if(t.dataset.status){const x=S.apps.find(a=>a.id===t.dataset.status);if(!x)return;const d={...x,status:t.value};if(APPLIED.includes(d.status)&&!d.appliedDate)d.appliedDate=todayStr();await Store.save('apps',d);toast(`${x.company} → ${t.value}`);return}
+  if(t.id==='tsel'){tSec=Number(t.value);clearInterval(tRun);tRun=null;tLeft=tSec;return render(true)}
+  if(t.id==='mkess')F.mkEssays=t.checked;
+  if(t.id==='qa_app'){QA.appId=t.value;QA.list=null;return render(true)}
+  if(t.id==='importf'&&t.files[0])importData(t.files[0]);
+});
+
+render(true);
+Store.init();
+loadFeed();
+loadNews();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+
+</body>
+</html>
