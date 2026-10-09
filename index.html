@@ -347,7 +347,7 @@ const IC={
 const ico=k=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
 const PAGES=[
  {grp:'',items:[{id:'home',label:'홈'},{id:'cal',label:'캘린더'}]},
- {grp:'지원 관리',items:[{id:'find',label:'공고 찾기'},{id:'apps',label:'지원 현황'}]},
+ {grp:'지원 관리',items:[{id:'find',label:'공고 등록'},{id:'apps',label:'지원 현황'}]},
  {grp:'서류 준비',items:[{id:'stories',label:'경험 은행'},{id:'essays',label:'자소서'},{id:'specs',label:'스펙 관리'}]},
  {grp:'면접 준비',items:[{id:'qs',label:'면접 연습'}]},
  {grp:'',items:[{id:'settings',label:'설정·백업'}]},
@@ -545,10 +545,9 @@ function pHome(){
   const dist=STATUS.map(s=>({...s,n:S.apps.filter(a=>(a.status||'관심')===s.k).length})).filter(s=>s.n);
   return `${ph(full(t),'오늘 챙길 일정과 지원 진행 상황이에요.',`<button class="btn sec" data-new-event="${t}">${ico('plus')}일정</button><button class="btn" data-new-app>${ico('plus')}지원 추가</button>`)}
   ${storeBanner()}
-  ${feedHint()}
   ${empty?`<div class="card"><div class="card-h"><h2>처음 시작하기</h2></div>
     <div class="steps">
-      <button class="step" data-go="find"><b>1단계</b><strong>공고 찾기</strong><span>관심 키워드로 직무·기업을 추천받고, 공고를 붙여넣어 바로 등록해요.</span></button>
+      <button class="step" data-go="find"><b>1단계</b><strong>공고 등록</strong><span>자소설닷컴에서 본 공고를 붙여넣으면 회사·마감일·자소서 문항이 한 번에 등록돼요.</span></button>
       <button class="step" data-go="stories"><b>2단계</b><strong>경험 정리</strong><span>해본 일을 적으면 자소서 소재를 뽑아 줘요. STAR로 정리해 두세요.</span></button>
       <button class="step" data-go="specs"><b>3단계</b><strong>스펙 등록</strong><span>어학 점수와 자격증, 만료일을 넣어 두면 캘린더에 알려 줘요.</span></button>
     </div></div>`:''}
@@ -611,7 +610,7 @@ function pApps(){
   const list=S.apps.filter(filt).filter(a=>!q||((a.company||'')+' '+(a.role||'')).toLowerCase().includes(q));
   const key=a=>{const n=nextOf(a);return n?n[0]:'9999'};
   list.sort((a,b)=>key(a).localeCompare(key(b))||(a.company||'').localeCompare(b.company||''));
-  return `${ph('지원 현황','어디에 지원했고 지금 어느 단계인지 한눈에 봐요.',`<button class="btn sec" data-go="find">공고 찾기</button><button class="btn" data-new-app>${ico('plus')}지원 추가</button>`)}
+  return `${ph('지원 현황','어디에 지원했고 지금 어느 단계인지 한눈에 봐요.',`<button class="btn sec" data-go="find">공고 등록</button><button class="btn" data-new-app>${ico('plus')}지원 추가</button>`)}
   <div class="sumstrip">
     <div><span>전체 기록</span><b class="num">${st.total}</b></div>
     <div><span>진행 중</span><b class="num">${st.active}</b></div>
@@ -625,7 +624,7 @@ function pApps(){
     <span class="sp"></span>
     <input class="in" id="appq" placeholder="회사·직무 검색" value="${esc(appQ)}" autocomplete="off" aria-label="회사·직무 검색">
   </div>
-  ${!S.apps.length?`<div class="empty">아직 기록한 지원이 없어요. ‘공고 찾기’에서 추천받거나 ‘지원 추가’를 눌러 보세요.</div>`:
+  ${!S.apps.length?`<div class="empty">아직 기록한 지원이 없어요. ‘공고 등록’에서 공고를 붙여넣거나 ‘지원 추가’를 눌러 보세요.</div>`:
   appView==='list'?(list.length?`<div class="tbl">
     <div class="tr th"><span>회사 · 직무</span><span>단계</span><span>접수 기간</span><span>지원일</span><span>다음 일정</span><span>D-day</span></div>
     ${list.map(a=>{const n=nextOf(a);const dn=n?dday(n[0]):null;return `<div class="tr" data-edit-app="${a.id}" role="button" tabindex="0">
@@ -661,46 +660,46 @@ function scorePost(p,kws){
   for(const k of kws){const q=k.toLowerCase();let w=0;if(t.includes(q))w+=3;if(c.includes(q))w+=2;if(w){s+=w;hit.push(k)}}
   return{s,hit};
 }
+/* ---------- 자소설닷컴 공고 붙여넣기 (AI 없이) ---------- */
+const PASTE={text:'',url:'',res:null,err:''};
+function parsePasted(txt){
+  const lines=txt.split(/\n/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
+  const pad2=n=>String(n).padStart(2,'0');const yNow=new Date().getFullYear();const dates=[];
+  const re=/(?:(\d{4})\s*[년.\-/]\s*)?(\d{1,2})\s*[월.\-/]\s*(\d{1,2})\s*일?(?:\s*\([^)]*\))?\s*(\d{1,2}:\d{2})?/g;let m;
+  for(const ln of lines){if(dates.length>=2)break;if(!/(접수|기간|마감|시작|~|부터|까지|\d{4}년|\d{1,2}월)/.test(ln))continue;re.lastIndex=0;
+    while((m=re.exec(ln))&&dates.length<2){const mo=+m[2],d=+m[3];if(mo<1||mo>12||d<1||d>31)continue;dates.push({date:`${m[1]||yNow}-${pad2(mo)}-${pad2(d)}`,time:m[4]||''})}}
+  let start=dates[0]||null,end=dates[1]||null;if(start&&!end){end=start;start=null}
+  const ti=lines.findIndex(l=>l.length<90&&/(채용|모집|공채|인턴|신입)/.test(l));
+  const title=ti>=0?lines[ti]:(lines[0]||'');
+  let company='';const cm=title.match(/^(.+?)\s*(?:채용공고|채용|\d{4}년?|20\d\d|하반기|상반기|신입|경력|공개)/);
+  if(cm&&cm[1].length<=25)company=cm[1].replace(/[\[\]()]/g,'').trim();
+  if(!company&&ti>0&&lines[ti-1].length<=25&&!/\d/.test(lines[ti-1]))company=lines[ti-1];
+  const qs=[];const seen=new Set();
+  for(const ln of lines){if(ln.length<12||ln.length>400)continue;
+    const lim=ln.match(/(\d{3,4})\s*자/);const isQ=/(기술|작성|서술|설명|기재|말씀|소개)(해|하여|하)?\s*(주십시오|주세요|주시기|바랍니다|하시오|하세요)|\?$/.test(ln);
+    if((lim&&isQ)||(isQ&&/^(\d+[.)]|Q\d|문항)/.test(ln))){const q=ln.replace(/^(\d+[.)]\s*|Q\d+[.:)]?\s*|문항\s*\d*[.:]?\s*)/,'').trim();if(!seen.has(q)){seen.add(q);qs.push({q,limit:lim?+lim[1]:0})}}}
+  return{company,role:title.replace(company,'').replace(/^[\s\-:|]+/,'').trim()||title,start:start?.date||'',end:end?.date||'',endTime:end?.time||'',qs};
+}
+function pasteCard(){
+  const r=PASTE.res;
+  return `<div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div class="card-h" style="margin:0"><h2>자소설닷컴 공고 붙여넣기</h2></div>
+    <p class="note" style="margin-top:-8px">자소설닷컴에서 마음에 드는 공고를 열고 전체 선택해 복사한 뒤 붙여넣으세요. 회사·직무·접수 기간·자소서 문항을 찾아 채워 줘요. 틀린 부분은 고친 뒤 추가하면 돼요.</p>
+    <div class="row"><a class="btn sec sm" href="https://jasoseol.com/" target="_blank" rel="noopener">자소설닷컴 열기 ↗</a></div>
+    <div class="field"><label for="pa_url">공고 링크 (선택)</label><input class="in" id="pa_url" value="${esc(PASTE.url)}" placeholder="https://jasoseol.com/recruit/…" inputmode="url"></div>
+    <div class="field"><label for="pa_text">공고 내용</label><textarea class="in" id="pa_text" rows="6" placeholder="공고 본문 붙여넣기">${esc(PASTE.text)}</textarea></div>
+    <button class="btn sm" data-pastego style="align-self:flex-start">내용 찾기</button>
+    ${PASTE.err?`<p class="err">${esc(PASTE.err)}</p>`:''}
+    ${r?`<div class="posting">
+      <div class="g2"><div class="field"><label for="pa_co">회사</label><input class="in" id="pa_co" value="${esc(r.company)}"></div><div class="field"><label for="pa_role">직무·공고명</label><input class="in" id="pa_role" value="${esc(r.role)}"></div></div>
+      <div class="g2"><div class="field"><label for="pa_sd">접수 시작</label><input class="in" id="pa_sd" type="date" value="${esc(r.start)}"></div><div class="field"><label for="pa_dl">서류 마감${r.endTime?' ('+esc(r.endTime)+')':''}</label><input class="in" id="pa_dl" type="date" value="${esc(r.end)}"></div></div>
+      ${r.qs.length?`<div class="field"><span class="lbl">찾은 자소서 문항 (체크한 것만 만들어요)</span><div class="checks" style="flex-direction:column;align-items:flex-start">${r.qs.map((q,i)=>`<label><input type="checkbox" id="pa_q${i}" checked>${esc(q.q)}${q.limit?` <span class="faint num">(${q.limit}자)</span>`:''}</label>`).join('')}</div></div>`:'<p class="note">자소서 문항은 찾지 못했어요. 필요하면 자소서 화면에서 직접 추가하세요.</p>'}
+      <button class="btn sm" data-pasteadd style="align-self:flex-start">지원 현황에 추가</button></div>`:''}
+  </div>`;
+}
 function pFind(){
-  const t=todayStr();const kws=F.kw;
-  const open=arr(FEED.list).filter(p=>!okDate(p.end)||p.end>=t).filter(p=>!FEED.career||p.career===FEED.career);
-  let rows=open.map(p=>({p,...scorePost(p,kws),isNew:(p.firstSeen||0)>FEED_SEEN&&FEED_SEEN>0}));
-  if(FEED.mode==='rec')rows=rows.filter(x=>x.s>0).sort((a,b)=>b.s-a.s||(a.p.end||'9').localeCompare(b.p.end||'9'));
-  else rows.sort((a,b)=>(a.p.end||'9').localeCompare(b.p.end||'9'));
-  if(FEED.onlyNew)rows=rows.filter(x=>x.isNew);
-  const newCnt=open.filter(p=>(p.firstSeen||0)>FEED_SEEN&&FEED_SEEN>0).length;
-  const shown=rows.slice(0,80);
-  const upd=FEED.updated?new Date(FEED.updated):null;
-  const updLabel=upd?`${upd.getMonth()+1}.${upd.getDate()} ${pad(upd.getHours())}:${pad(upd.getMinutes())}`:'';
-  return `${ph('공고 찾기','관심 키워드를 정하면 자소설닷컴에 올라온 공고 중 맞는 것을 골라 보여 줘요. 공고는 매일 오전 7시·오후 4시에 새로 모아요.')}
-  <div class="card" style="display:flex;flex-direction:column;gap:12px">
-    <div class="field"><span class="lbl">내 관심 키워드 (입력 후 Enter, 최대 8개)</span>
-      <div class="kw">${kws.map((k,i)=>`<span class="kwchip">${esc(k)}<button data-kwdel="${i}" aria-label="${esc(k)} 지우기">×</button></span>`).join('')}
-      <input id="kwin" placeholder="${kws.length?'더 추가':'예: SCM, 구매, 물류, 생산관리'}" autocomplete="off" aria-label="키워드 입력"></div></div>
-    <div class="quick">${QUICK_KW.filter(k=>!kws.includes(k)).map(k=>`<button data-kwadd="${k}">+ ${k}</button>`).join('')}</div>
-    <p class="note">키워드는 공고 제목, 모집 직무, 회사 이름에서 찾아요. 기업 이름(예: CJ, 코스맥스)을 넣어도 돼요.</p>
-  </div>
-  <div class="toolbar">
-    <div class="seg" role="group" aria-label="보기"><button data-feedmode="rec" aria-pressed="${FEED.mode==='rec'}">추천 공고</button><button data-feedmode="all" aria-pressed="${FEED.mode==='all'}">전체 공고</button></div>
-    <div class="chips">${[['','전체'],['신입','신입'],['인턴','인턴'],['경력','경력']].map(([k,l])=>`<button class="fchip" data-feedcareer="${k}" aria-pressed="${FEED.career===k}">${l}</button>`).join('')}
-      ${newCnt?`<button class="fchip" data-feednew aria-pressed="${FEED.onlyNew}">새 공고 ${newCnt}</button>`:''}</div>
-    <span class="sp"></span>
-    <span class="faint small num">${FEED.loading?'불러오는 중…':updLabel?`업데이트 ${updLabel} · 진행 중 ${arr(FEED.list).length}개`:''}</span>
-    <button class="btn sec sm" data-feedrefresh>새로고침</button>
-  </div>
-  ${FEED.err?`<p class="err">${esc(FEED.err)}</p>`:''}
-  ${FEED.list&&!FEED.list.length&&!FEED.loading?`<div class="empty">아직 모은 공고가 없어요. 공고 수집이 처음 한 번 돌고 나면 여기에 떠요.</div>`:''}
-  ${FEED.list&&FEED.list.length&&FEED.mode==='rec'&&!kws.length?`<div class="empty">위에 관심 키워드를 넣으면 맞는 공고를 골라 드려요.</div>`:''}
-  ${FEED.list&&FEED.list.length&&(kws.length||FEED.mode==='all')&&!rows.length?`<div class="empty">조건에 맞는 진행 중 공고가 없어요. 키워드를 바꾸거나 ‘전체 공고’를 눌러 보세요.</div>`:''}
-  ${shown.length?`<div style="display:flex;flex-direction:column;gap:10px">${shown.map(({p,hit,isNew})=>{const n=dday(p.end);const ad=S.apps.some(a=>a.link===p.url);return `<div class="rec">
-    <div class="row"><strong>${esc(p.company||'회사명 확인')}</strong>${p.career?`<span class="tag">${esc(p.career)}</span>`:''}${isNew?`<span class="tag" style="background:var(--accent-soft);color:var(--accent-ink)">NEW</span>`:''}<span class="sp"></span>${n!==null?`<span class="dd ${ddCls(n)}">${ddLabel(n)}</span>`:''}</div>
-    <p style="color:var(--ink)">${esc(p.title)}</p>
-    ${p.duties?`<p class="small">${esc(p.duties)}</p>`:''}
-    <div class="small faint num">접수 ${okDate(p.start)?mdw(p.start)+(p.startTime?' '+esc(p.startTime):''):'?'} ~ ${okDate(p.end)?mdw(p.end)+(p.endTime?' '+esc(p.endTime):''):'?'}</div>
-    ${hit.length?`<div class="tags">${hit.map(k=>`<span class="tag">#${esc(k)}</span>`).join('')}</div>`:''}
-    <div class="row"><button class="btn sm" data-addfeed="${esc(p.id)}" ${ad?'disabled':''}>${ad?'✓ 지원 현황에 있어요':'+ 지원 현황에 추가'}</button><a class="btn sec sm" href="${esc(p.url)}" target="_blank" rel="noopener">공고 보기 ↗</a></div>
-  </div>`}).join('')}${rows.length>shown.length?`<p class="note">마감이 가까운 순으로 ${shown.length}개까지 보여요. 키워드를 더 좁혀 보세요.</p>`:''}</div>`:''}
-  <p class="note">공고 정보는 자소설닷컴 공개 페이지에서 자동으로 모은 거예요. 지원 전에 ‘공고 보기’에서 원문을 꼭 확인하세요.</p>`;
+  return `${ph('공고 등록','자소설닷컴에서 본 공고를 복사해 붙여넣으면 회사·직무·접수 기간·자소서 문항을 찾아 지원 현황에 한 번에 등록해요.')}
+  ${pasteCard()}`;
 }
 
 function pStories(){
@@ -825,7 +824,6 @@ function render(force){
   lastPage=page;
   v.innerHTML=({home:pHome,cal:pCal,find:pFind,apps:pApps,stories:pStories,essays:pEssays,specs:pSpecs,qs:pQs,settings:pSettings}[page])();
   if(page==='essays')bindEssay();
-  if(page==='find'&&!FEED.list&&!FEED.loading)loadFeed();
 }
 
 let eTimer=null;
@@ -884,7 +882,9 @@ function appModal(x){
     ${fld('a_tal','인재상·핵심가치',ta('a_tal','talent',x.talent,2))}
     ${fld('a_biz','주요 사업·최근 이슈',ta('a_biz','business',x.business,3))}
     ${fld('a_mot','지원 동기 포인트',ta('a_mot','motive',x.motive,2))}
-    <div class="row"><button type="button" class="btn ai-btn sm" id="a_ai" ${aiReady()?'':'disabled'}>AI로 분석 틀 잡기</button><span class="note">${aiReady()?'AI 답은 최신 정보가 아닐 수 있어요. 홈페이지·IR·뉴스로 확인하세요.':'게시된 앱에서 Claude 사용을 허용하면 쓸 수 있어요.'}</span></div>
+    <div class="field"><span class="lbl">자료 찾기 바로가기</span><div class="row" id="a_links">${researchLinks(x.company)}</div></div>
+    <div class="row"><button type="button" class="btn sec sm" id="a_tpl">분석 틀 채우기</button><button type="button" class="btn sec sm" id="a_extbtn">인재상 키워드 뽑기</button></div>
+    <div id="a_ext" hidden class="field"><label for="a_exttext">회사 인재상·핵심가치 페이지 글을 붙여넣으세요</label><textarea class="in" id="a_exttext" rows="4" placeholder="채용 홈페이지의 '인재상' 부분을 복사해 붙여넣기"></textarea><button type="button" class="btn sm" id="a_extgo" style="align-self:flex-start">키워드 뽑기</button></div>
     <div id="a_out"></div>
     <h3>메모</h3>
     ${ta('a_memo','memo',x.memo,4,'aria-label="메모" placeholder="전형 후기, 준비할 것, 결과 등"')}`,
@@ -897,26 +897,66 @@ function appModal(x){
     }, x.id?()=>Store.del('apps',x.id):null,
     root=>{
       const ne=root.querySelector('#a_newess');if(ne)ne.onclick=async()=>{const id=await Store.save('essays',{company:x.company,question:'',body:'',limit:0,created:Date.now()});if(id){essayId=id;root.innerHTML='';go('essays')}};
-      const b=root.querySelector('#a_ai'),out=root.querySelector('#a_out');
-      b.onclick=async()=>{
-        const co=root.querySelector('#a_co').value.trim(),role=root.querySelector('#a_role').value.trim();
-        if(!co){out.innerHTML='<p class="err">회사 이름을 먼저 적어 주세요.</p>';return}
-        b.disabled=true;out.innerHTML=thinking('분석 틀을 잡는 중…');
-        try{
-          const r=await askJSON(`한국 신입 공채 지원자를 위해 기업 분석의 틀을 잡아 줘. 확실히 알려진 일반 정보만 쓰고, 불확실하거나 최근에 바뀌었을 수 있는 건 '(확인 필요)'라고 표시해. 수치·날짜를 지어내지 마.
-회사: ${co} / 직무: ${role||'(미정)'}
-지원자 경험:
-${storySummary(8)}
-JSON 객체 하나로만 답해: {"talent":"알려진 인재상·핵심가치 요약","business":"주요 사업과 이 직무가 하는 일 2~3문장","research":["지원 전에 직접 찾아볼 것 4개"],"motive":["지원자 경험과 연결한 지원 동기 각도 2개"]}`);
-          out.innerHTML=`<div class="aibox">${r.talent?`<div><h4>인재상</h4><p>${esc(r.talent)}</p></div>`:''}${r.business?`<div><h4>사업·직무</h4><p>${esc(r.business)}</p></div>`:''}${arr(r.research).length?`<div><h4>직접 찾아볼 것</h4><ul>${arr(r.research).map(z=>`<li>${esc(z)}</li>`).join('')}</ul></div>`:''}${arr(r.motive).length?`<div><h4>지원 동기 각도</h4><ul>${arr(r.motive).map(z=>`<li>${esc(z)}</li>`).join('')}</ul></div>`:''}
-            <button type="button" class="btn sec sm" id="a_fill" style="align-self:flex-start">빈 칸에 채워 넣기</button></div>`;
-          out.querySelector('#a_fill').onclick=()=>{const f=(id,v)=>{const el=root.querySelector(id);if(v&&!el.value.trim())el.value=v};f('#a_tal',r.talent);f('#a_biz',[r.business,arr(r.research).length&&('찾아볼 것: '+arr(r.research).join(' / '))].filter(Boolean).join('\n'));f('#a_mot',arr(r.motive).join('\n'));toast('빈 칸에 넣었어요. 저장을 눌러 주세요')};
-        }catch(e){const m=aiErr(e);out.innerHTML=m?`<p class="err">${esc(m)}</p>`:''}
-        b.disabled=!aiReady();
+      const out=root.querySelector('#a_out'),coIn=root.querySelector('#a_co');
+      coIn.addEventListener('input',()=>{root.querySelector('#a_links').innerHTML=researchLinks(coIn.value)});
+      root.querySelector('#a_tpl').onclick=()=>{
+        const f=(id,v)=>{const el=root.querySelector(id);if(!el.value.trim())el.value=v};
+        f('#a_tal','• 인재상 키워드: \n• 핵심가치: \n• 내 경험과 연결: ');
+        f('#a_biz','• 주요 사업·매출 구성: \n• 최근 1년 이슈(뉴스): \n• 경쟁사·업계 동향: \n• 이 직무가 하는 일: ');
+        f('#a_mot','• 왜 이 회사인가: \n• 왜 이 직무인가: \n• 입사 후 기여할 점: ');
+        toast('빈 칸에 분석 틀을 넣었어요');
+      };
+      root.querySelector('#a_extbtn').onclick=()=>{const box=root.querySelector('#a_ext');box.hidden=!box.hidden;if(!box.hidden)root.querySelector('#a_exttext').focus()};
+      root.querySelector('#a_extgo').onclick=()=>{
+        const txt=root.querySelector('#a_exttext').value;
+        if(txt.trim().length<10){out.innerHTML='<p class="err">인재상 글을 조금 더 붙여넣어 주세요.</p>';return}
+        const found=extractValues(txt);
+        if(!found.length){out.innerHTML='<p class="err">알려진 인재상 키워드를 찾지 못했어요. 핵심 단어를 직접 적어 주세요.</p>';return}
+        const tags=[...new Set(found.flatMap(f=>f.tags))];
+        const stories=S.stories.filter(s=>arr(s.tags).some(t=>tags.includes(t))).slice(0,4);
+        out.innerHTML=`<div class="aibox"><div><h4>찾은 인재상 키워드</h4><div class="tags" style="margin-top:6px">${found.map(f=>`<span class="tag">${esc(f.k)}${f.n>1?' ×'+f.n:''}</span>`).join('')}</div></div>
+          ${stories.length?`<div><h4>연결해 쓸 만한 내 경험</h4><ul>${stories.map(s=>`<li>${esc(s.title)} <span class="faint">(${arr(s.tags).filter(t=>tags.includes(t)).map(esc).join(', ')})</span></li>`).join('')}</ul></div>`:'<p class="faint">경험 은행에 역량 태그를 달아 두면 여기서 맞는 경험을 골라 줘요.</p>'}
+          <button type="button" class="btn sec sm" id="a_extapply" style="align-self:flex-start">인재상 칸에 넣기</button></div>`;
+        out.querySelector('#a_extapply').onclick=()=>{const el=root.querySelector('#a_tal');const line='인재상 키워드: '+found.map(f=>f.k).join(', ')+(stories.length?'\n연결할 경험: '+stories.map(s=>s.title).join(', '):'');el.value=el.value.trim()?el.value.trim()+'\n'+line:line;toast('인재상 칸에 넣었어요. 저장을 눌러 주세요')};
       };
     });
 }
 
+const NEWS={data:null,loading:null};
+function loadNews(){
+  if(NEWS.loading)return NEWS.loading;
+  if(!NEWS.data){const c=lsGet('jn_news',null);if(c)NEWS.data=c}
+  NEWS.loading=(async()=>{for(const u of ['news.json?t='+Date.now(),'https://raw.githubusercontent.com/nakyoung-naya/dfddf/main/news.json']){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const j=await r.json();NEWS.data=j;lsSet('jn_news',j);break}catch(e){}}NEWS.loading=null})();
+  return NEWS.loading;
+}
+const cleanCo=n=>(n||'').replace(/\(주\)|㈜|주식회사|\s+/g,'').trim();
+function newsFor(co){const c=NEWS.data&&NEWS.data.companies;const k=cleanCo(co);if(!c||!k)return null;if(c[k])return c[k];const hit=Object.keys(c).find(n=>n.includes(k)||k.includes(n));return hit?c[hit]:null}
+function newsHtml(co){
+  if(!(co||'').trim())return '<span class="note">회사 이름을 적으면 최근 뉴스를 보여 줘요.</span>';
+  if(!NEWS.data)return '<span class="note">뉴스를 불러오는 중이에요…</span>';
+  const n=newsFor(co);
+  if(!n)return `<span class="note">모아 둔 뉴스가 없어요. 위 ‘최신 뉴스’ 바로가기로 찾아보세요. 매일 자동으로 받아 보려면 설정·백업의 ‘뉴스 받을 회사 목록’을 GitHub companies.txt에 붙여넣으세요.</span>`;
+  return `<div class="list">${n.items.map(i=>`<a class="li" href="${esc(i.url)}" target="_blank" rel="noopener" style="grid-template-columns:52px minmax(0,1fr);text-decoration:none;color:inherit"><span class="date num">${md(i.date)}</span><span><strong style="white-space:normal">${esc(i.title)}</strong><small>${esc(i.source)}</small></span></a>`).join('')}</div>
+  <button type="button" class="btn sec sm" id="a_newsadd" style="margin-top:8px">이 뉴스 제목을 사업·이슈 칸에 넣기</button>`;
+}
+const VALUE_DICT=[
+ ['도전',['도전','개척','과감'],['도전·성장']],['열정',['열정','몰입','패기'],['도전·성장']],['성장',['성장','자기계발','학습','배움'],['도전·성장']],
+ ['창의',['창의','창조','아이디어'],['문제해결']],['혁신',['혁신','변화','개선'],['문제해결']],['실행력',['실행','추진력','행동'],['문제해결']],
+ ['전문성',['전문성','전문가','프로','역량'],['직무전문성']],['책임감',['책임','주인의식','오너십','주도'],['리더십']],['리더십',['리더십','리더'],['리더십']],
+ ['소통',['소통','커뮤니케이션','경청'],['협업']],['협업',['협업','협력','팀워크','함께','시너지'],['협업']],['존중',['존중','배려'],['협업']],
+ ['고객 중심',['고객','소비자'],['고객응대']],['신뢰',['신뢰','정직','윤리','정도','투명'],['꼼꼼함']],['원칙',['원칙','기본','규정'],['꼼꼼함']],
+ ['글로벌',['글로벌','세계','해외','국제'],['글로벌']],['데이터·디지털',['데이터','디지털','AI','분석'],['데이터분석','AI·디지털']],['끈기',['끈기','인내','집념'],['도전·성장']],
+ ['상생·사회공헌',['상생','사회','ESG','지속가능'],[]],['안전',['안전'],['꼼꼼함']]
+];
+function extractValues(txt){const t=txt.replace(/\s+/g,' ');return VALUE_DICT.map(([k,words,tags])=>({k,tags,n:words.reduce((s,w)=>s+(t.split(w).length-1),0)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n)}
+function researchLinks(co){
+  co=(co||'').trim();if(!co)return '<span class="note">회사 이름을 적으면 바로가기가 생겨요.</span>';
+  const q=encodeURIComponent;
+  const L=[['인재상·핵심가치',`https://www.google.com/search?q=${q(co+' 인재상 핵심가치')}`],['채용 홈페이지',`https://www.google.com/search?q=${q(co+' 채용 홈페이지')}`],
+    ['최신 뉴스',`https://search.naver.com/search.naver?where=news&sort=1&query=${q(co)}`],['사업보고서(DART)',`https://www.google.com/search?q=${q(co+' 사업보고서 dart.fss.or.kr')}`],
+    ['기업 리뷰(잡플래닛)',`https://www.jobplanet.co.kr/search?query=${q(co)}`],['합격 자소서·후기',`https://www.google.com/search?q=${q(co+' 합격 자소서 면접 후기')}`]];
+  return L.map(([l,u])=>`<a class="btn sec sm" href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join('');
+}
 function storyModal(x){
   x=x||{tags:[]};
   modal(x.id?'경험 수정':'경험 추가',`
@@ -1102,6 +1142,13 @@ view.addEventListener('click',async e=>{
   if(!t||['A','SELECT','LABEL','INPUT'].includes(t.tagName))return;
   const d=t.dataset;
   if(d.go)return;
+  if(d.pastego!==undefined){PASTE.text=document.getElementById('pa_text').value;PASTE.url=document.getElementById('pa_url').value.trim();if(PASTE.text.trim().length<20){PASTE.err='공고 내용을 붙여넣어 주세요.';PASTE.res=null;return render(true)}PASTE.err='';PASTE.res=parsePasted(PASTE.text);return render(true)}
+  if(d.pasteadd!==undefined){const r=PASTE.res;if(!r)return;const v=id=>document.getElementById(id).value.trim();const co=v('pa_co');if(!co){toast('회사 이름을 적어 주세요');return}
+    const qs=r.qs.filter((q,i)=>document.getElementById('pa_q'+i)?.checked);
+    await Store.save('apps',{company:co,role:v('pa_role'),status:qs.length?'작성중':'관심',startDate:v('pa_sd'),deadline:v('pa_dl'),link:PASTE.url,memo:r.endTime?'마감 시각 '+r.endTime:'',check:{},created:Date.now()});
+    for(const q of qs)await Store.save('essays',{company:co,question:q.q,body:'',limit:q.limit||0,created:Date.now()});
+    toast(`${co} 추가했어요${qs.length?` · 자소서 문항 ${qs.length}개`:''}`);PASTE.res=null;PASTE.text='';PASTE.url='';return render(true)}
+  if(d.copyco!==undefined){const ta=document.getElementById('colist');try{await navigator.clipboard.writeText(ta.value);toast('회사 목록을 복사했어요')}catch(err){ta.focus();ta.select();toast('선택했어요. 복사해서 붙여넣으세요')}return}
   if(d.feedmode){FEED.mode=d.feedmode;lsSet('jn_feedmode',FEED.mode);return render(true)}
   if(d.feedcareer!==undefined){FEED.career=d.feedcareer;return render(true)}
   if(d.feednew!==undefined){FEED.onlyNew=!FEED.onlyNew;return render(true)}
@@ -1171,7 +1218,6 @@ view.addEventListener('change',async e=>{const t=e.target;
 
 render(true);
 Store.init();
-loadFeed();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 
