@@ -1,0 +1,33 @@
+name: 자소설닷컴 공고 모으기
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # 매일 오전 7시 (한국 시간)
+    - cron: '0 7 * * *'    # 매일 오후 4시 (한국 시간)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jasoseol
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 공고 모으기
+        run: node scripts/fetch_jasoseol.mjs
+      - name: 바뀐 공고 저장
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add postings.json
+          git diff --cached --quiet || git commit -m "공고 업데이트 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M')"
+          git push
